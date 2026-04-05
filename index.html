@@ -691,10 +691,27 @@ async function apiGet(action,params={}){
   try{const r=await fetch(url+'?'+new URLSearchParams({action,...params}));const d=await r.json();if(d.error)throw new Error(d.error);return d;}
   catch(e){console.error(action,e);return null;}
 }
+
 async function apiPost(body){
   const url=getGasUrl();if(!url){openSettings();return null;}
-  try{const r=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});const d=await r.json();if(d.error)throw new Error(d.error);return d;}
-  catch(e){console.error(body.action,e);return null;}
+  try{
+    // Content-Type을 text/plain으로 설정하여 Preflight(405 에러)를 방지합니다.
+    const r=await fetch(url,{
+      method:'POST',
+      headers:{ 'Content-Type':'text/plain' }, 
+      body:JSON.stringify(body)
+    });
+    const d=await r.json();
+    if(d.error) throw new Error(d.error);
+    return d;
+  }
+  catch(e){
+    console.error("API POST 에러:",e);
+    if(body.action === 'analyzeTimetable') {
+        document.getElementById('tt-ai-msg').innerHTML = `<span style="color:var(--red);">연결 오류: ${e.message}</span>`;
+    }
+    return null;
+  }
 }
 
 // 탭
