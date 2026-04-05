@@ -686,21 +686,38 @@ function openSettings(){document.getElementById('s-gas').value=getGasUrl();docum
 function saveSettings(){localStorage.setItem('gas_url',document.getElementById('s-gas').value.trim());localStorage.setItem('api_key',document.getElementById('s-key').value.trim());closeModal('set-modal');loadAll();}
 
 // API
-async function apiGet(action,params={}){
-  const url=getGasUrl();if(!url){openSettings();return null;}
-  try{const r=await fetch(url+'?'+new URLSearchParams({action,...params}));const d=await r.json();if(d.error)throw new Error(d.error);return d;}
-  catch(e){console.error(action,e);return null;}
+async function apiGet(action, params = {}) {
+  const url = getGasUrl();
+  if (!url) { openSettings(); return null; }
+  try {
+    const r = await fetch(url + '?' + new URLSearchParams({ action, ...params }));
+    const d = await r.json();
+    if (d.error) throw new Error(d.error);
+    return d;
+  } catch (e) {
+    console.error("GET 에러:", e);
+    return null;
+  }
 }
 
-async function apiPost(body){
-  const url=getGasUrl();if(!url){openSettings();return null;}
-  try{
-    // Content-Type을 text/plain으로 설정하여 Preflight(405 에러)를 방지합니다.
-    const r=await fetch(url,{
-      method:'POST',
-      headers:{ 'Content-Type':'text/plain' }, 
-      body:JSON.stringify(body)
+async function apiPost(body) {
+  const url = getGasUrl();
+  if (!url) { openSettings(); return null; }
+  try {
+    // 405 에러 방지를 위해 text/plain 사용
+    const r = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify(body)
     });
+    const d = await r.json();
+    if (d.error) throw new Error(d.error);
+    return d;
+  } catch (e) {
+    console.error("POST 에러:", e);
+    return null;
+  }
+}
     const d=await r.json();
     if(d.error) throw new Error(d.error);
     return d;
