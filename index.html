@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -78,7 +77,6 @@ input:focus,select:focus,textarea:focus { border-color:var(--blue); background:#
 .iBtn:hover { border-color:var(--blue); color:var(--blue); }
 .iBtn.del:hover { border-color:var(--red); color:var(--red); }
 
-/* 투두 */
 .todo-text { font-size:13px; }
 .todo-text.done { text-decoration:line-through; color:var(--hint); }
 .todo-meta { display:flex; gap:5px; margin-top:3px; flex-wrap:wrap; align-items:center; }
@@ -87,7 +85,6 @@ input:focus,select:focus,textarea:focus { border-color:var(--blue); background:#
 .due-label.duetoday { color:var(--amber); font-weight:700; }
 .chk { width:15px; height:15px; accent-color:var(--blue); cursor:pointer; flex-shrink:0; margin-top:2px; }
 
-/* 출석 */
 .att-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(155px,1fr)); gap:8px; }
 .att-card { border:1px solid var(--border); border-radius:var(--radius-sm); padding:10px 12px; background:var(--bg); }
 .att-name { font-size:13px; font-weight:700; margin-bottom:6px; }
@@ -98,7 +95,6 @@ input:focus,select:focus,textarea:focus { border-color:var(--blue); background:#
 .aBtn.a-조퇴 { background:var(--purple-bg); color:var(--purple); border-color:var(--purple); font-weight:700; }
 .aBtn.a-병결 { background:var(--teal-bg); color:var(--teal); border-color:var(--teal); font-weight:700; }
 
-/* 시간표 */
 .tt-table { width:100%; border-collapse:collapse; font-size:12px; table-layout:fixed; }
 .tt-table th { background:var(--bg); color:var(--muted); padding:7px 4px; font-weight:700; text-align:center; border:1px solid var(--border); font-size:11px; }
 .tt-table th.tc { background:var(--blue-bg); color:var(--blue); }
@@ -110,7 +106,6 @@ input:focus,select:focus,textarea:focus { border-color:var(--blue); background:#
 .rc.tc { background:#C8E1F7 !important; }
 .tbadge { display:inline-block; font-size:9px; background:var(--blue); color:#fff; border-radius:3px; padding:1px 4px; margin-left:3px; vertical-align:middle; font-weight:700; }
 
-/* AI 패널 */
 .ai-panel { border:1.5px solid var(--purple); border-radius:var(--radius); background:var(--surface); padding:16px 18px; }
 .ai-badge { font-size:10px; background:var(--purple-bg); color:var(--purple); border-radius:20px; padding:2px 8px; font-weight:700; }
 .ai-btn { width:100%; margin-top:8px; padding:10px; border:none; border-radius:var(--radius-sm); font-size:13px; font-weight:700; cursor:pointer; font-family:inherit; display:flex; align-items:center; justify-content:center; gap:8px; }
@@ -122,21 +117,18 @@ input:focus,select:focus,textarea:focus { border-color:var(--blue); background:#
 .add-ai-btn.added { background:var(--green); }
 .add-ai-btn:disabled { background:var(--hint); cursor:not-allowed; }
 
-/* 바로가기 */
 .sc-item { display:flex; align-items:center; gap:10px; padding:9px 12px; border:1px solid var(--border); border-radius:var(--radius-sm); text-decoration:none; background:var(--bg); margin-bottom:6px; transition:all .15s; }
 .sc-item:hover { border-color:#A8C8E8; background:var(--blue-bg); }
 .sc-icon { width:30px; height:30px; border-radius:7px; display:flex; align-items:center; justify-content:center; font-size:15px; flex-shrink:0; }
 .sc-del { margin-left:auto; font-size:11px; color:var(--hint); cursor:pointer; padding:2px 6px; border:1px solid var(--border); border-radius:4px; background:none; }
 .sc-del:hover { border-color:var(--red); color:var(--red); }
 
-/* 상담 */
-.ct-학업 { background:var(--blue-bg); color:var(--blue); }
-.ct-생활 { background:var(--green-bg); color:var(--green); }
-.ct-교우 { background:var(--purple-bg); color:var(--purple); }
-.ct-가정 { background:var(--amber-bg); color:var(--amber); }
-.ct-기타 { background:var(--bg); color:var(--muted); border:1px solid var(--border); }
+.ct-학업 { background:var(--blue-bg); color:var(--blue); border-radius:4px; padding:2px 7px; font-size:10px; font-weight:700; }
+.ct-생활 { background:var(--green-bg); color:var(--green); border-radius:4px; padding:2px 7px; font-size:10px; font-weight:700; }
+.ct-교우 { background:var(--purple-bg); color:var(--purple); border-radius:4px; padding:2px 7px; font-size:10px; font-weight:700; }
+.ct-가정 { background:var(--amber-bg); color:var(--amber); border-radius:4px; padding:2px 7px; font-size:10px; font-weight:700; }
+.ct-기타 { background:var(--bg); color:var(--muted); border:1px solid var(--border); border-radius:4px; padding:2px 7px; font-size:10px; font-weight:700; }
 
-/* 모달 */
 .overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.4); z-index:200; align-items:center; justify-content:center; }
 .overlay.open { display:flex; }
 .modal { background:var(--surface); border-radius:var(--radius); padding:22px; width:440px; max-width:92vw; display:flex; flex-direction:column; gap:12px; max-height:90vh; overflow-y:auto; }
@@ -152,6 +144,7 @@ input:focus,select:focus,textarea:focus { border-color:var(--blue); background:#
 .spinner { width:15px; height:15px; border:2px solid rgba(255,255,255,.4); border-top-color:#fff; border-radius:50%; animation:spin .7s linear infinite; }
 @keyframes spin { to { transform:rotate(360deg); } }
 .empty   { text-align:center; color:var(--hint); font-size:13px; padding:18px 0; }
+.loading { text-align:center; color:var(--hint); font-size:13px; padding:14px 0; }
 .form-block { display:flex; flex-direction:column; gap:8px; padding:12px; background:var(--bg); border-radius:var(--radius-sm); border:1px solid var(--border); margin-bottom:12px; }
 
 @media(max-width:660px) { .grid2{grid-template-columns:1fr;} .tab-panel{padding:12px;} header{padding:0 12px;} }
@@ -179,7 +172,7 @@ input:focus,select:focus,textarea:focus { border-color:var(--blue); background:#
   <button class="tab-btn" onclick="go('sc',this)">🔗 바로가기</button>
 </nav>
 
-<!-- ══ 홈 ══════════════════════════════════════ -->
+<!-- 홈 -->
 <div class="tab-panel active" id="tab-home">
   <div class="grid2">
     <div class="card span2">
@@ -187,24 +180,24 @@ input:focus,select:focus,textarea:focus { border-color:var(--blue); background:#
       <div style="overflow-x:auto;"><table class="tt-table" id="home-tt"></table></div>
     </div>
     <div class="card"><div class="card-header"><span class="card-title">오늘 수업</span></div><div id="home-cls"></div></div>
-    <div class="card"><div class="card-header"><span class="card-title">🎂 생일 알림</span></div><div id="home-bday"></div></div>
-    <div class="card"><div class="card-header"><span class="card-title">오늘 출석 현황</span></div><div id="home-att"></div></div>
-    <div class="card"><div class="card-header"><span class="card-title">오늘 알림장</span></div><div id="home-ntc"></div></div>
+    <div class="card"><div class="card-header"><span class="card-title">🎂 생일 알림</span></div><div id="home-bday"><div class="loading">불러오는 중...</div></div></div>
+    <div class="card"><div class="card-header"><span class="card-title">오늘 출석 현황</span></div><div id="home-att"><div class="loading">불러오는 중...</div></div></div>
+    <div class="card"><div class="card-header"><span class="card-title">오늘 알림장</span></div><div id="home-ntc"><div class="loading">불러오는 중...</div></div></div>
     <div class="card span2">
       <div class="card-header"><span class="card-title">할 일 (미완료)</span><div style="display:flex;gap:6px;" id="home-stats"></div></div>
-      <div id="home-todos"></div>
+      <div id="home-todos"><div class="loading">불러오는 중...</div></div>
     </div>
     <div class="ai-panel span2">
       <div class="card-header"><span class="card-title" style="color:var(--purple);">🤖 메시지 → 할 일 자동 추출</span><span class="ai-badge">✨ AI</span></div>
       <div style="font-size:12px;color:var(--muted);margin-bottom:8px;">충북소통메신저 등에서 받은 메시지를 붙여넣으면 AI가 할 일을 자동으로 추출해요.</div>
       <textarea id="ai-msg" placeholder="메시지를 붙여넣으세요..." rows="3" style="width:100%;resize:vertical;"></textarea>
-      <button class="ai-btn btn-purple" id="ai-msg-btn" onclick="runMsgAI()"><span id="ai-msg-lbl">✨ AI로 할 일 추출하기</span></button>
+      <button class="ai-btn btn-purple" id="ai-msg-btn" onclick="runMsgAI()" style="background:var(--purple);color:#fff;"><span id="ai-msg-lbl">✨ AI로 할 일 추출하기</span></button>
       <div id="ai-msg-out"></div>
     </div>
   </div>
 </div>
 
-<!-- ══ 할 일 ════════════════════════════════════ -->
+<!-- 할 일 -->
 <div class="tab-panel" id="tab-todo">
   <div class="card">
     <div class="card-header">
@@ -226,34 +219,34 @@ input:focus,select:focus,textarea:focus { border-color:var(--blue); background:#
         <button class="btn btn-primary" onclick="addTodo()">추가</button>
       </div>
     </div>
-    <div id="todo-list"><div class="empty">할 일이 없어요 ✨</div></div>
+    <div id="todo-list"><div class="loading">불러오는 중...</div></div>
   </div>
 </div>
 
-<!-- ══ 출석 ════════════════════════════════════ -->
+<!-- 출석 -->
 <div class="tab-panel" id="tab-att">
   <div class="card">
-    <div class="card-header"><span class="card-title">출석 현황</span><input type="date" id="att-date" onchange="renderAtt()"></div>
+    <div class="card-header"><span class="card-title">출석 현황</span><input type="date" id="att-date" onchange="loadAtt()"></div>
     <div style="font-size:12px;color:var(--muted);margin-bottom:10px;">버튼을 눌러 출결 상태를 기록하세요. 다시 누르면 취소돼요.</div>
-    <div class="att-grid" id="att-grid"></div>
+    <div class="att-grid" id="att-grid"><div class="loading" style="grid-column:1/-1;">불러오는 중...</div></div>
   </div>
 </div>
 
-<!-- ══ 알림장 ═══════════════════════════════════ -->
+<!-- 알림장 -->
 <div class="tab-panel" id="tab-notice">
   <div class="card">
-    <div class="card-header"><span class="card-title">알림장 / 공지</span><input type="date" id="ntc-date" onchange="renderNotices()"></div>
+    <div class="card-header"><span class="card-title">알림장 / 공지</span><input type="date" id="ntc-date" onchange="loadNotices()"></div>
     <div class="form-block">
       <div class="row">
         <input type="text" class="flex1" id="ntc-text" placeholder="오늘 전달할 내용..." onkeydown="if(event.key==='Enter')addNotice()">
         <button class="btn btn-primary" onclick="addNotice()">추가</button>
       </div>
     </div>
-    <div id="ntc-list"></div>
+    <div id="ntc-list"><div class="loading">불러오는 중...</div></div>
   </div>
 </div>
 
-<!-- ══ 학부모 연락 ══════════════════════════════ -->
+<!-- 학부모 연락 -->
 <div class="tab-panel" id="tab-contact">
   <div class="card">
     <div class="card-header"><span class="card-title">학부모 연락 로그</span></div>
@@ -269,11 +262,11 @@ input:focus,select:focus,textarea:focus { border-color:var(--blue); background:#
         <button class="btn btn-primary" onclick="addContact()">기록</button>
       </div>
     </div>
-    <div id="ct-list"></div>
+    <div id="ct-list"><div class="loading">불러오는 중...</div></div>
   </div>
 </div>
 
-<!-- ══ 상담 일지 ════════════════════════════════ -->
+<!-- 상담 -->
 <div class="tab-panel" id="tab-counsel">
   <div class="card">
     <div class="card-header"><span class="card-title">상담 일지</span></div>
@@ -289,19 +282,25 @@ input:focus,select:focus,textarea:focus { border-color:var(--blue); background:#
         <button class="btn btn-primary" onclick="addCounsel()">저장</button>
       </div>
     </div>
-    <div id="cs-list"></div>
+    <div id="cs-list"><div class="loading">불러오는 중...</div></div>
   </div>
 </div>
 
-<!-- ══ 학생 명단 ════════════════════════════════ -->
+<!-- 학생 명단 -->
 <div class="tab-panel" id="tab-students">
   <div class="card">
-    <div class="card-header"><span class="card-title">학생 명단</span><button class="btn btn-primary btn-sm" onclick="openStuModal()">+ 추가</button></div>
-    <div id="stu-list"></div>
+    <div class="card-header">
+      <span class="card-title">학생 명단</span>
+      <div style="display:flex;gap:6px;">
+        <button class="btn btn-green btn-sm" onclick="openImportModal()">📂 엑셀/CSV 일괄 등록</button>
+        <button class="btn btn-primary btn-sm" onclick="openStuModal()">+ 개별 추가</button>
+      </div>
+    </div>
+    <div id="stu-list"><div class="loading">불러오는 중...</div></div>
   </div>
 </div>
 
-<!-- ══ 시간표 ═══════════════════════════════════ -->
+<!-- 시간표 -->
 <div class="tab-panel" id="tab-tt">
   <div class="grid2">
     <div class="card">
@@ -324,28 +323,33 @@ input:focus,select:focus,textarea:focus { border-color:var(--blue); background:#
         <img id="tt-prev" style="display:none;max-width:100%;max-height:150px;margin:8px auto 0;border-radius:6px;">
       </div>
       <input type="file" id="tt-file" accept="image/*" style="display:none;" onchange="onTTFile(this.files[0])">
-      <button class="ai-btn btn-purple" id="tt-ai-btn" onclick="runTTAI()" style="display:none;"><span id="tt-ai-lbl">✨ AI로 시간표 인식하기</span></button>
+      <button class="ai-btn" id="tt-ai-btn" onclick="runTTAI()" style="display:none;background:var(--purple);color:#fff;"><span id="tt-ai-lbl">✨ AI로 시간표 인식하기</span></button>
       <div id="tt-ai-msg" style="margin-top:8px;font-size:13px;"></div>
     </div>
   </div>
 </div>
 
-<!-- ══ 바로가기 ═════════════════════════════════ -->
+<!-- 바로가기 -->
 <div class="tab-panel" id="tab-sc">
   <div class="card" style="max-width:480px;">
     <div class="card-header"><span class="card-title">빠른 바로가기</span><button class="btn btn-primary btn-sm" onclick="openScModal()">+ 추가</button></div>
-    <div id="sc-list"></div>
+    <div id="sc-list"><div class="loading">불러오는 중...</div></div>
   </div>
 </div>
 
-<!-- ══ 모달들 ════════════════════════════════════ -->
+<!-- 설정 모달 -->
 <div class="overlay" id="set-modal">
   <div class="modal">
     <h2>⚙️ 설정</h2>
     <div>
-      <label>Anthropic API 키 <span style="color:var(--purple);font-weight:700;">(AI 기능)</span></label>
+      <label>GAS 웹앱 URL</label>
+      <input type="url" id="s-gas" placeholder="https://script.google.com/macros/s/...">
+      <div style="font-size:11px;color:var(--hint);margin-top:3px;">배포 후 받은 URL을 입력하세요. 브라우저에만 저장됩니다.</div>
+    </div>
+    <div>
+      <label>Anthropic API 키 <span style="color:var(--purple);font-weight:700;">(AI 기능용)</span></label>
       <input type="password" id="s-key" placeholder="sk-ant-...">
-      <div style="font-size:11px;color:var(--hint);margin-top:3px;">브라우저 localStorage에만 저장 · GitHub 코드에 절대 포함되지 않아요</div>
+      <div style="font-size:11px;color:var(--hint);margin-top:3px;">브라우저에만 저장 · GitHub 코드에 절대 포함되지 않아요</div>
     </div>
     <div class="modal-btns">
       <button class="btn btn-ghost btn-sm" onclick="closeModal('set-modal')">취소</button>
@@ -354,6 +358,7 @@ input:focus,select:focus,textarea:focus { border-color:var(--blue); background:#
   </div>
 </div>
 
+<!-- 학생 추가 모달 -->
 <div class="overlay" id="stu-modal">
   <div class="modal">
     <h2 id="stu-modal-ttl">학생 추가</h2>
@@ -369,6 +374,39 @@ input:focus,select:focus,textarea:focus { border-color:var(--blue); background:#
   </div>
 </div>
 
+<!-- 일괄 등록 모달 -->
+<div class="overlay" id="import-modal">
+  <div class="modal" style="width:520px;">
+    <h2>📂 학생 명단 일괄 등록</h2>
+    <div style="font-size:13px;color:var(--muted);line-height:1.7;">엑셀(.xlsx) 또는 CSV(.csv) 파일을 올려주세요.<br><span style="font-weight:700;color:var(--text);">첫 번째 행은 헤더</span>여야 해요.</div>
+    <div style="background:var(--bg);border-radius:6px;padding:10px 12px;font-size:12px;color:var(--blue);font-family:monospace;">번호 | 이름 | 생일(YYYY-MM-DD) | 연락처 | 비고</div>
+    <div id="imp-drop" style="border:2px dashed var(--green);border-radius:6px;padding:20px;text-align:center;cursor:pointer;color:var(--muted);font-size:13px;transition:background .15s;"
+      onclick="document.getElementById('imp-file').click()"
+      ondragover="event.preventDefault();this.style.background='var(--green-bg)'"
+      ondragleave="this.style.background=''"
+      ondrop="onImpDrop(event)">
+      📂 클릭하거나 파일을 여기에 드래그<br><span style="font-size:11px;">.xlsx / .csv 지원</span>
+    </div>
+    <input type="file" id="imp-file" accept=".xlsx,.csv" style="display:none;" onchange="onImpFile(this.files[0])">
+    <div id="imp-mapping" style="display:none;">
+      <div style="font-size:12px;font-weight:700;margin-bottom:6px;">열 매핑</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;" id="imp-map-grid"></div>
+    </div>
+    <div id="imp-preview" style="display:none;">
+      <div style="font-size:12px;font-weight:700;margin-bottom:6px;" id="imp-prev-ttl"></div>
+      <div style="overflow:auto;max-height:180px;border:1px solid var(--border);border-radius:6px;">
+        <table id="imp-prev-tbl" style="width:100%;border-collapse:collapse;font-size:12px;"></table>
+      </div>
+    </div>
+    <div id="imp-err" style="color:var(--red);font-size:12px;display:none;"></div>
+    <div class="modal-btns">
+      <button class="btn btn-ghost btn-sm" onclick="closeModal('import-modal');resetImport()">취소</button>
+      <button class="btn btn-green btn-sm" id="imp-ok" style="display:none;" onclick="confirmImport()">✅ 등록하기</button>
+    </div>
+  </div>
+</div>
+
+<!-- 바로가기 모달 -->
 <div class="overlay" id="sc-modal">
   <div class="modal">
     <h2>바로가기 추가</h2>
@@ -382,18 +420,16 @@ input:focus,select:focus,textarea:focus { border-color:var(--blue); background:#
   </div>
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script>
-// ═══════════════════════════════════════════════
-// 스토리지 헬퍼
-// ═══════════════════════════════════════════════
-const LS = {
-  get: (k, def=[]) => { try { return JSON.parse(localStorage.getItem(k)) ?? def; } catch { return def; } },
-  set: (k, v) => localStorage.setItem(k, JSON.stringify(v)),
-};
+// ═══════════════════════════════════════════
+// ★ 여기에 GAS URL 입력 (또는 설정에서 입력)
+// ═══════════════════════════════════════════
+const DEFAULT_GAS_URL = '';  // 예: 'https://script.google.com/macros/s/XXXX/exec'
 
-// ═══════════════════════════════════════════════
-// 날짜/유틸
-// ═══════════════════════════════════════════════
+// ═══════════════════════════════════════════
+// 초기화
+// ═══════════════════════════════════════════
 const now      = new Date();
 const WD       = ['일','월','화','수','목','금','토'];
 const DOW      = now.getDay();
@@ -401,255 +437,258 @@ const TODAY    = now.toISOString().split('T')[0];
 const WEEK_MON = getMonday(now);
 const PERIODS  = ['1교시','2교시','3교시','4교시','5교시','6교시','7교시'];
 const DAYS     = ['mon','tue','wed','thu','fri'];
+const PL       = {high:'높음',mid:'보통',low:'낮음'};
+const PC       = {high:'badge-high',mid:'badge-mid',low:'badge-low'};
 
 function getMonday(d) {
-  const c = new Date(d), day = c.getDay();
-  c.setDate(c.getDate() - day + (day === 0 ? -6 : 1));
+  const c=new Date(d), day=c.getDay();
+  c.setDate(c.getDate()-day+(day===0?-6:1));
   return c.toISOString().split('T')[0];
 }
 function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
-function uid()  { return Date.now() + Math.random().toString(36).slice(2,6); }
 
 document.getElementById('hdr-date').textContent =
   now.getFullYear()+'년 '+(now.getMonth()+1)+'월 '+now.getDate()+'일 ('+WD[DOW]+')';
-
-// 기본 날짜 세팅
-['att-date','ntc-date','ct-date','cs-date'].forEach(id => { const el=document.getElementById(id); if(el) el.value=TODAY; });
-document.getElementById('t-due').value = TODAY;
+['att-date','ntc-date','ct-date','cs-date'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=TODAY;});
+document.getElementById('t-due').value   = TODAY;
 document.getElementById('tt-week').value = WEEK_MON;
 
-// ═══════════════════════════════════════════════
+// ═══════════════════════════════════════════
+// 설정 (localStorage에 저장)
+// ═══════════════════════════════════════════
+function getGasUrl() { return localStorage.getItem('gas_url') || DEFAULT_GAS_URL; }
+function getApiKey() { return localStorage.getItem('api_key') || ''; }
+
+function openSettings() {
+  document.getElementById('s-gas').value = getGasUrl();
+  document.getElementById('s-key').value = getApiKey();
+  openModal('set-modal');
+}
+function saveSettings() {
+  localStorage.setItem('gas_url', document.getElementById('s-gas').value.trim());
+  localStorage.setItem('api_key', document.getElementById('s-key').value.trim());
+  closeModal('set-modal');
+  loadAll();
+}
+
+// ═══════════════════════════════════════════
+// GAS API 헬퍼
+// ═══════════════════════════════════════════
+async function apiGet(action, params={}) {
+  const url = getGasUrl();
+  if (!url) { showNoUrl(); return null; }
+  const q = new URLSearchParams({action, ...params});
+  try {
+    const res = await fetch(url+'?'+q);
+    const data = await res.json();
+    if (data.error) throw new Error(data.error);
+    return data;
+  } catch(e) { console.error(action, e); return null; }
+}
+
+async function apiPost(body) {
+  const url = getGasUrl();
+  if (!url) { showNoUrl(); return null; }
+  try {
+    const res = await fetch(url, {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(body)
+    });
+    const data = await res.json();
+    if (data.error) throw new Error(data.error);
+    return data;
+  } catch(e) { console.error(body.action, e); return null; }
+}
+
+function showNoUrl() {
+  alert('⚙️ 설정에서 GAS URL을 먼저 입력해주세요!');
+  openSettings();
+}
+
+// ═══════════════════════════════════════════
 // 탭
-// ═══════════════════════════════════════════════
+// ═══════════════════════════════════════════
 function go(name, btn) {
   document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
   document.getElementById('tab-'+name).classList.add('active');
   btn.classList.add('active');
+  if(name==='att')      loadAtt();
+  if(name==='notice')   loadNotices();
+  if(name==='contact')  loadContacts();
+  if(name==='counsel')  loadCounseling();
+  if(name==='students') loadStudents();
+  if(name==='tt')       loadTTEdit();
+  if(name==='sc')       loadShortcuts();
 }
 
-// ═══════════════════════════════════════════════
-// 설정 (API 키)
-// ═══════════════════════════════════════════════
-function openSettings() { document.getElementById('s-key').value = LS.get('api_key',''); openModal('set-modal'); }
-function saveSettings()  { LS.set('api_key', document.getElementById('s-key').value.trim()); closeModal('set-modal'); }
-function getAPIKey()     { return LS.get('api_key',''); }
-
-// ═══════════════════════════════════════════════
-// 모달
-// ═══════════════════════════════════════════════
 function openModal(id)  { document.getElementById(id).classList.add('open'); }
 function closeModal(id) { document.getElementById(id).classList.remove('open'); }
 
-// ═══════════════════════════════════════════════
+// ═══════════════════════════════════════════
 // 투두
-// ═══════════════════════════════════════════════
-let todoFilter = 'all';
-const PL = {high:'높음',mid:'보통',low:'낮음'};
-const PC = {high:'badge-high',mid:'badge-mid',low:'badge-low'};
+// ═══════════════════════════════════════════
+let todos=[], todoFilter='all';
 
-function getTodos()    { return LS.get('todos'); }
-function saveTodos(v)  { LS.set('todos', v); }
-
-function addTodo(text, due, priority) {
-  const t = text !== undefined ? text : document.getElementById('t-text').value.trim();
+async function loadTodos() {
+  const data = await apiGet('getTodos');
+  if (data) todos = data;
+  renderTodos(); renderHomeTodos();
+}
+async function addTodo(text, due, priority) {
+  const t = text!==undefined?text:document.getElementById('t-text').value.trim();
   if (!t) return;
-  const d = due      !== undefined ? due      : document.getElementById('t-due').value;
-  const p = priority !== undefined ? priority : document.getElementById('t-pri').value;
-  if (text === undefined) document.getElementById('t-text').value = '';
-  const todos = getTodos();
-  todos.push({ id: uid(), text: t, due: d, priority: p, done: false, createdAt: new Date().toISOString() });
-  saveTodos(todos); renderTodos(); renderHomeTodos();
+  const d = due!==undefined?due:document.getElementById('t-due').value;
+  const p = priority!==undefined?priority:document.getElementById('t-pri').value;
+  if (text===undefined) document.getElementById('t-text').value='';
+  await apiPost({action:'addTodo',text:t,due:d,priority:p});
+  loadTodos();
 }
-function toggleTodo(id) {
-  const todos = getTodos().map(t => t.id === id ? {...t, done: !t.done} : t);
-  saveTodos(todos); renderTodos(); renderHomeTodos();
-}
-function deleteTodo(id) {
-  if (!confirm('삭제?')) return;
-  saveTodos(getTodos().filter(t => t.id !== id)); renderTodos(); renderHomeTodos();
-}
-function setTF(f, btn) {
-  todoFilter = f;
-  document.querySelectorAll('#tab-todo .btn-ghost').forEach(b => b.style.fontWeight = '');
-  btn.style.fontWeight = '700';
-  renderTodos();
-}
+async function toggleTodo(id, done) { await apiPost({action:'updateTodoDone',id,done}); loadTodos(); }
+async function deleteTodo(id) { if(!confirm('삭제?'))return; await apiPost({action:'deleteTodo',id}); loadTodos(); }
+function setTF(f,btn) { todoFilter=f; document.querySelectorAll('#tab-todo .btn-ghost').forEach(b=>b.style.fontWeight=''); btn.style.fontWeight='700'; renderTodos(); }
+
 function renderTodos() {
-  const list  = document.getElementById('todo-list');
-  const chips = document.getElementById('todo-chips');
-  const todos = getTodos();
-  const done  = todos.filter(t=>t.done).length;
-  const ovd   = todos.filter(t=>!t.done&&t.due&&t.due<TODAY).length;
-  chips.innerHTML =
-    `<span class="chip chip-blue">${todos.length-done}개 남음</span>`+
-    (ovd?`<span class="chip chip-red">기한 초과 ${ovd}</span>`:'')+
-    (done?`<span class="chip chip-green">완료 ${done}</span>`:'');
-  let fl = todos.filter(t => todoFilter==='all'?true:todoFilter==='done'?t.done:!t.done)
-    .sort((a,b) => { if(a.done!==b.done) return a.done?1:-1; return ({high:0,mid:1,low:2}[a.priority]||1)-({high:0,mid:1,low:2}[b.priority]||1); });
-  if (!fl.length) { list.innerHTML='<div class="empty">할 일이 없어요 ✨</div>'; return; }
-  list.innerHTML = fl.map(t => {
-    const iso = !t.done&&t.due&&t.due<TODAY, isT = t.due===TODAY;
-    let due = ''; if(t.due){const d=new Date(t.due+'T00:00:00');due=(d.getMonth()+1)+'/'+d.getDate();if(isT)due='오늘 마감';if(iso)due='기한 초과 ('+due+')';}
-    return `<div class="list-item">
-      <input type="checkbox" class="chk" ${t.done?'checked':''} onchange="toggleTodo('${t.id}')">
-      <div class="list-body">
-        <div class="todo-text${t.done?' done':''}">${esc(t.text)}</div>
-        <div class="todo-meta"><span class="badge ${PC[t.priority]||'badge-mid'}">${PL[t.priority]||'보통'}</span>${due?`<span class="due-label${iso?' overdue':isT?' duetoday':''}">${due}</span>`:''}</div>
-      </div>
-      <div class="list-actions"><button class="iBtn del" onclick="deleteTodo('${t.id}')">삭제</button></div>
+  const list=document.getElementById('todo-list'), chips=document.getElementById('todo-chips');
+  const done=todos.filter(t=>t.done).length, ovd=todos.filter(t=>!t.done&&t.due&&t.due<TODAY).length;
+  chips.innerHTML=`<span class="chip chip-blue">${todos.length-done}개 남음</span>`+(ovd?`<span class="chip chip-red">기한 초과 ${ovd}</span>`:'')+( done?`<span class="chip chip-green">완료 ${done}</span>`:'');
+  let fl=todos.filter(t=>todoFilter==='all'?true:todoFilter==='done'?t.done:!t.done)
+    .sort((a,b)=>{if(a.done!==b.done)return a.done?1:-1;return ({high:0,mid:1,low:2}[a.priority]||1)-({high:0,mid:1,low:2}[b.priority]||1);});
+  if(!fl.length){list.innerHTML='<div class="empty">할 일이 없어요 ✨</div>';return;}
+  list.innerHTML=fl.map(t=>{
+    const iso=!t.done&&t.due&&t.due<TODAY,isT=t.due===TODAY;
+    let due='';if(t.due){const d=new Date(t.due+'T00:00:00');due=(d.getMonth()+1)+'/'+d.getDate();if(isT)due='오늘 마감';if(iso)due='기한 초과 ('+due+')';}
+    return`<div class="list-item">
+      <input type="checkbox" class="chk" ${t.done?'checked':''} onchange="toggleTodo(${t.id},this.checked)">
+      <div class="list-body"><div class="todo-text${t.done?' done':''}">${esc(t.text)}</div>
+      <div class="todo-meta"><span class="badge ${PC[t.priority]||'badge-mid'}">${PL[t.priority]||'보통'}</span>${due?`<span class="due-label${iso?' overdue':isT?' duetoday':''}">${due}</span>`:''}</div></div>
+      <div class="list-actions"><button class="iBtn del" onclick="deleteTodo(${t.id})">삭제</button></div>
     </div>`;
   }).join('');
 }
 function renderHomeTodos() {
-  const el = document.getElementById('home-todos');
-  const st = document.getElementById('home-stats');
-  const todos = getTodos();
-  const done  = todos.filter(t=>t.done).length;
-  const ovd   = todos.filter(t=>!t.done&&t.due&&t.due<TODAY).length;
-  st.innerHTML =
-    `<span class="chip chip-blue">${todos.length-done}개 남음</span>`+
-    (ovd?`<span class="chip chip-red">기한 초과 ${ovd}</span>`:'')+
-    (done?`<span class="chip chip-green">완료 ${done}</span>`:'');
-  const fl = todos.filter(t=>!t.done).sort((a,b)=>({high:0,mid:1,low:2}[a.priority]||1)-({high:0,mid:1,low:2}[b.priority]||1)).slice(0,5);
-  if (!fl.length) { el.innerHTML='<div class="empty">미완료 할 일이 없어요 ✨</div>'; return; }
-  el.innerHTML = fl.map(t => {
-    const iso = t.due&&t.due<TODAY, isT = t.due===TODAY;
-    let due = ''; if(t.due){const d=new Date(t.due+'T00:00:00');due=(d.getMonth()+1)+'/'+d.getDate();if(isT)due='오늘 마감';if(iso)due='기한 초과 ('+due+')';}
-    return `<div class="list-item">
-      <input type="checkbox" class="chk" onchange="toggleTodo('${t.id}')">
-      <div class="list-body"><div class="todo-text">${esc(t.text)}</div><div class="todo-meta"><span class="badge ${PC[t.priority]||'badge-mid'}">${PL[t.priority]||'보통'}</span>${due?`<span class="due-label${iso?' overdue':isT?' duetoday':''}">${due}</span>`:''}</div></div>
+  const el=document.getElementById('home-todos'), st=document.getElementById('home-stats');
+  const done=todos.filter(t=>t.done).length, ovd=todos.filter(t=>!t.done&&t.due&&t.due<TODAY).length;
+  st.innerHTML=`<span class="chip chip-blue">${todos.length-done}개 남음</span>`+(ovd?`<span class="chip chip-red">기한 초과 ${ovd}</span>`:'')+( done?`<span class="chip chip-green">완료 ${done}</span>`:'');
+  const fl=todos.filter(t=>!t.done).sort((a,b)=>({high:0,mid:1,low:2}[a.priority]||1)-({high:0,mid:1,low:2}[b.priority]||1)).slice(0,5);
+  if(!fl.length){el.innerHTML='<div class="empty">미완료 할 일이 없어요 ✨</div>';return;}
+  el.innerHTML=fl.map(t=>{
+    const iso=t.due&&t.due<TODAY,isT=t.due===TODAY;
+    let due='';if(t.due){const d=new Date(t.due+'T00:00:00');due=(d.getMonth()+1)+'/'+d.getDate();if(isT)due='오늘 마감';if(iso)due='기한 초과 ('+due+')';}
+    return`<div class="list-item"><input type="checkbox" class="chk" onchange="toggleTodo(${t.id},this.checked)">
+      <div class="list-body"><div class="todo-text">${esc(t.text)}</div>
+      <div class="todo-meta"><span class="badge ${PC[t.priority]||'badge-mid'}">${PL[t.priority]||'보통'}</span>${due?`<span class="due-label${iso?' overdue':isT?' duetoday':''}">${due}</span>`:''}</div></div>
     </div>`;
   }).join('');
 }
 
-// ═══════════════════════════════════════════════
+// ═══════════════════════════════════════════
 // 출석
-// ═══════════════════════════════════════════════
-function getAtt()   { return LS.get('attendance', {}); }
-function saveAtt(v) { LS.set('attendance', v); }
+// ═══════════════════════════════════════════
+let attData=[], stuList=[];
 
-function setAtt(date, name, status) {
-  const att = getAtt();
-  if (!att[date]) att[date] = {};
-  if (att[date][name]?.status === status) { delete att[date][name]; }
-  else { att[date][name] = { status, reason: att[date][name]?.reason || '' }; }
-  saveAtt(att); renderAtt(); renderHomeAtt();
+async function loadAtt() {
+  const date=document.getElementById('att-date').value;
+  if(!stuList.length) stuList = await apiGet('getStudents') || [];
+  attData = await apiGet('getAttendance',{date}) || [];
+  renderAtt(); renderHomeAtt();
 }
-function setAttReason(date, name, reason) {
-  const att = getAtt();
-  if (att[date]?.[name]) { att[date][name].reason = reason; saveAtt(att); }
+async function setAtt(date,name,status) {
+  await apiPost({action:'saveAttendance',date,studentName:name,status,reason:''});
+  attData = await apiGet('getAttendance',{date}) || [];
+  renderAtt(); renderHomeAtt();
+}
+async function clearAtt(date,name) {
+  await apiPost({action:'deleteAttendance',date,studentName:name});
+  attData = await apiGet('getAttendance',{date}) || [];
+  renderAtt(); renderHomeAtt();
+}
+async function saveAttReason(date,name,status,reason) {
+  await apiPost({action:'saveAttendance',date,studentName:name,status,reason});
 }
 function renderAtt() {
-  const date = document.getElementById('att-date').value;
-  const grid = document.getElementById('att-grid');
-  const stus = LS.get('students');
-  const att  = getAtt()[date] || {};
-  if (!stus.length) { grid.innerHTML='<div class="empty" style="grid-column:1/-1;">👥 학생 명단 탭에서 학생을 먼저 등록해주세요</div>'; return; }
-  grid.innerHTML = stus.map(s => {
-    const a = att[s.name] || {};
-    const st = a.status || '';
-    return `<div class="att-card">
+  const date=document.getElementById('att-date').value;
+  const grid=document.getElementById('att-grid');
+  if(!stuList.length){grid.innerHTML='<div class="empty" style="grid-column:1/-1;">👥 학생 명단 탭에서 학생을 먼저 등록해주세요</div>';return;}
+  const attMap={};
+  attData.forEach(a=>attMap[a.studentName]={status:a.status,reason:a.reason});
+  grid.innerHTML=stuList.map(s=>{
+    const a=attMap[s.name]||{}, st=a.status||'';
+    return`<div class="att-card">
       <div class="att-name">${esc(s.name)}</div>
-      <div class="att-row">
-        ${['결석','지각','조퇴','병결'].map(v=>`<button class="aBtn${st===v?' a-'+v:''}" onclick="setAtt('${esc(date)}','${esc(s.name)}','${v}')">${v}</button>`).join('')}
+      <div class="att-row">${['결석','지각','조퇴','병결'].map(v=>`<button class="aBtn${st===v?' a-'+v:''}" onclick="setAtt('${esc(date)}','${esc(s.name)}','${v}')">${v}</button>`).join('')}
+        ${st?`<button class="aBtn" onclick="clearAtt('${esc(date)}','${esc(s.name)}')">취소</button>`:''}
       </div>
-      ${st?`<div style="margin-top:6px;"><input type="text" class="att-reason" value="${esc(a.reason||'')}" placeholder="사유" style="width:100%;font-size:11px;padding:3px 6px;" onchange="setAttReason('${esc(date)}','${esc(s.name)}',this.value)"></div>`:''}
+      ${st?`<input type="text" value="${esc(a.reason||'')}" placeholder="사유" style="width:100%;font-size:11px;padding:3px 6px;margin-top:6px;" onchange="saveAttReason('${esc(date)}','${esc(s.name)}','${st}',this.value)">`:'' }
     </div>`;
   }).join('');
 }
 function renderHomeAtt() {
-  const el   = document.getElementById('home-att');
-  const date = document.getElementById('att-date').value;
-  const stus = LS.get('students');
-  const att  = getAtt()[date] || {};
-  const list = Object.entries(att);
-  const absent=list.filter(([,v])=>v.status==='결석').length;
-  const late  =list.filter(([,v])=>v.status==='지각').length;
-  const early =list.filter(([,v])=>v.status==='조퇴').length;
-  const sick  =list.filter(([,v])=>v.status==='병결').length;
-  const norm  = stus.length - absent - late - early - sick;
-  el.innerHTML=`
-    <div style="font-size:11px;color:var(--muted);margin-bottom:8px;">${date} · 전체 ${stus.length}명</div>
+  const el=document.getElementById('home-att'), date=document.getElementById('att-date').value;
+  const absent=attData.filter(a=>a.status==='결석').length, late=attData.filter(a=>a.status==='지각').length;
+  const early=attData.filter(a=>a.status==='조퇴').length, sick=attData.filter(a=>a.status==='병결').length;
+  const norm=stuList.length-absent-late-early-sick;
+  el.innerHTML=`<div style="font-size:11px;color:var(--muted);margin-bottom:8px;">${date} · 전체 ${stuList.length}명</div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
       <div style="background:var(--green-bg);border-radius:8px;padding:10px;text-align:center;"><div style="font-size:20px;font-weight:700;color:var(--green);">${norm}</div><div style="font-size:11px;color:var(--green);">정상</div></div>
       <div style="background:var(--red-bg);border-radius:8px;padding:10px;text-align:center;"><div style="font-size:20px;font-weight:700;color:var(--red);">${absent}</div><div style="font-size:11px;color:var(--red);">결석</div></div>
       <div style="background:var(--amber-bg);border-radius:8px;padding:10px;text-align:center;"><div style="font-size:20px;font-weight:700;color:var(--amber);">${late}</div><div style="font-size:11px;color:var(--amber);">지각</div></div>
       <div style="background:var(--teal-bg);border-radius:8px;padding:10px;text-align:center;"><div style="font-size:20px;font-weight:700;color:var(--teal);">${sick}</div><div style="font-size:11px;color:var(--teal);">병결</div></div>
     </div>
-    ${list.length?list.map(([name,v])=>`<div style="font-size:12px;padding:3px 0;border-bottom:1px solid var(--border);">${esc(name)} <span class="badge badge-${v.status==='결석'?'high':v.status==='지각'?'mid':'low'}">${esc(v.status)}</span>${v.reason?` <span style="color:var(--muted);">${esc(v.reason)}</span>`:''}</div>`).join(''):''}`;
+    ${attData.length?attData.map(a=>`<div style="font-size:12px;padding:3px 0;border-bottom:1px solid var(--border);">${esc(a.studentName)} <span class="badge badge-${a.status==='결석'?'high':a.status==='지각'?'mid':'low'}">${esc(a.status)}</span>${a.reason?` <span style="color:var(--muted);">${esc(a.reason)}</span>`:''}</div>`).join(''):''}`;
 }
 
-// ═══════════════════════════════════════════════
+// ═══════════════════════════════════════════
 // 알림장
-// ═══════════════════════════════════════════════
-function getNotices()   { return LS.get('notices', {}); }
-function saveNotices(v) { LS.set('notices', v); }
-
-function addNotice() {
-  const date = document.getElementById('ntc-date').value;
-  const text = document.getElementById('ntc-text').value.trim(); if (!text) return;
-  document.getElementById('ntc-text').value = '';
-  const ntc = getNotices();
-  if (!ntc[date]) ntc[date] = [];
-  ntc[date].push({ id: uid(), text, done: false });
-  saveNotices(ntc); renderNotices(); renderHomeNtc();
+// ═══════════════════════════════════════════
+let notices=[];
+async function loadNotices() {
+  const date=document.getElementById('ntc-date').value;
+  notices = await apiGet('getNotices',{date}) || [];
+  renderNotices(); renderHomeNtc();
 }
-function toggleNotice(date, id) {
-  const ntc = getNotices();
-  ntc[date] = (ntc[date]||[]).map(n => n.id===id?{...n,done:!n.done}:n);
-  saveNotices(ntc); renderNotices(); renderHomeNtc();
+async function addNotice() {
+  const text=document.getElementById('ntc-text').value.trim(); if(!text)return;
+  const date=document.getElementById('ntc-date').value;
+  document.getElementById('ntc-text').value='';
+  await apiPost({action:'addNotice',date,content:text}); loadNotices();
 }
-function deleteNotice(date, id) {
-  const ntc = getNotices();
-  ntc[date] = (ntc[date]||[]).filter(n => n.id !== id);
-  saveNotices(ntc); renderNotices(); renderHomeNtc();
-}
+async function toggleNotice(id,done) { await apiPost({action:'updateNoticeDone',id,done}); loadNotices(); }
+async function deleteNotice(id) { await apiPost({action:'deleteNotice',id}); loadNotices(); }
 function renderNotices() {
-  const date = document.getElementById('ntc-date').value;
-  const list = document.getElementById('ntc-list');
-  const items = (getNotices()[date]||[]);
-  if (!items.length) { list.innerHTML='<div class="empty">알림장이 없어요</div>'; return; }
-  list.innerHTML = items.map(n=>`<div class="list-item">
-    <input type="checkbox" class="chk" ${n.done?'checked':''} onchange="toggleNotice('${esc(date)}','${n.id}')">
-    <div class="list-body"><div style="font-size:13px;${n.done?'text-decoration:line-through;color:var(--hint);':''}">${esc(n.text)}</div></div>
-    <div class="list-actions"><button class="iBtn del" onclick="deleteNotice('${esc(date)}','${n.id}')">삭제</button></div>
+  const list=document.getElementById('ntc-list');
+  if(!notices.length){list.innerHTML='<div class="empty">알림장이 없어요</div>';return;}
+  list.innerHTML=notices.map(n=>`<div class="list-item">
+    <input type="checkbox" class="chk" ${n.done?'checked':''} onchange="toggleNotice(${n.id},this.checked)">
+    <div class="list-body"><div style="font-size:13px;${n.done?'text-decoration:line-through;color:var(--hint);':''}">${esc(n.content)}</div></div>
+    <div class="list-actions"><button class="iBtn del" onclick="deleteNotice(${n.id})">삭제</button></div>
   </div>`).join('');
 }
 function renderHomeNtc() {
-  const el    = document.getElementById('home-ntc');
-  const items = (getNotices()[TODAY]||[]);
-  if (!items.length) { el.innerHTML='<div class="empty">오늘 알림장이 없어요</div>'; return; }
-  el.innerHTML = items.map(n=>`<div style="font-size:13px;padding:5px 0;border-bottom:1px solid var(--border);${n.done?'text-decoration:line-through;color:var(--hint);':''}">${esc(n.text)}</div>`).join('');
+  const el=document.getElementById('home-ntc');
+  if(!notices.length){el.innerHTML='<div class="empty">오늘 알림장이 없어요</div>';return;}
+  el.innerHTML=notices.map(n=>`<div style="font-size:13px;padding:5px 0;border-bottom:1px solid var(--border);${n.done?'text-decoration:line-through;color:var(--hint);':''}">${esc(n.content)}</div>`).join('');
 }
 
-// ═══════════════════════════════════════════════
+// ═══════════════════════════════════════════
 // 학부모 연락
-// ═══════════════════════════════════════════════
-function getContacts()   { return LS.get('contacts'); }
-function saveContacts(v) { LS.set('contacts', v); }
-function addContact() {
-  const stu = document.getElementById('ct-stu').value.trim(); if (!stu) return;
-  const cnt = document.getElementById('ct-cnt').value.trim(); if (!cnt) return;
-  const item = {
-    id: uid(), date: document.getElementById('ct-date').value,
-    student: stu, parent: document.getElementById('ct-par').value.trim(),
-    method: document.getElementById('ct-how').value, content: cnt,
-    createdAt: new Date().toISOString()
-  };
-  document.getElementById('ct-cnt').value = '';
-  const arr = getContacts(); arr.unshift(item); saveContacts(arr); renderContacts();
+// ═══════════════════════════════════════════
+let contacts=[];
+async function loadContacts() { contacts=await apiGet('getContacts')||[]; renderContacts(); }
+async function addContact() {
+  const stu=document.getElementById('ct-stu').value.trim(); if(!stu)return;
+  const cnt=document.getElementById('ct-cnt').value.trim(); if(!cnt)return;
+  document.getElementById('ct-cnt').value='';
+  await apiPost({action:'addContact',date:document.getElementById('ct-date').value,student:stu,parent:document.getElementById('ct-par').value.trim(),method:document.getElementById('ct-how').value,content:cnt});
+  loadContacts();
 }
-function deleteContact(id) {
-  if (!confirm('삭제?')) return;
-  saveContacts(getContacts().filter(c=>c.id!==id)); renderContacts();
-}
+async function deleteContact(id) { if(!confirm('삭제?'))return; await apiPost({action:'deleteContact',id}); loadContacts(); }
 function renderContacts() {
-  const list = document.getElementById('ct-list');
-  const arr  = getContacts().slice(0,30);
-  if (!arr.length) { list.innerHTML='<div class="empty">연락 기록이 없어요</div>'; return; }
-  const MC = {'전화':'chip-blue','문자':'chip-green','앱':'chip-amber','대면':'chip-blue'};
-  list.innerHTML = arr.map(c=>`<div class="list-item">
+  const list=document.getElementById('ct-list');
+  if(!contacts.length){list.innerHTML='<div class="empty">연락 기록이 없어요</div>';return;}
+  const MC={'전화':'chip-blue','문자':'chip-green','앱':'chip-blue','대면':'chip-blue'};
+  list.innerHTML=contacts.map(c=>`<div class="list-item">
     <div class="list-body">
       <div style="display:flex;gap:6px;align-items:center;margin-bottom:3px;">
         <span style="font-size:13px;font-weight:700;">${esc(c.student)}</span>
@@ -659,95 +698,67 @@ function renderContacts() {
       </div>
       <div style="font-size:12px;color:var(--muted);">${esc(c.content)}</div>
     </div>
-    <div class="list-actions"><button class="iBtn del" onclick="deleteContact('${c.id}')">삭제</button></div>
+    <div class="list-actions"><button class="iBtn del" onclick="deleteContact(${c.id})">삭제</button></div>
   </div>`).join('');
 }
 
-// ═══════════════════════════════════════════════
+// ═══════════════════════════════════════════
 // 상담 일지
-// ═══════════════════════════════════════════════
-function getCounsels()   { return LS.get('counsels'); }
-function saveCounsels(v) { LS.set('counsels', v); }
-function addCounsel() {
-  const stu = document.getElementById('cs-stu').value.trim(); if (!stu) return;
-  const cnt = document.getElementById('cs-cnt').value.trim(); if (!cnt) return;
-  const item = {
-    id: uid(), date: document.getElementById('cs-date').value,
-    student: stu, type: document.getElementById('cs-type').value,
-    content: cnt, followUp: document.getElementById('cs-follow').value.trim(),
-    createdAt: new Date().toISOString()
-  };
-  document.getElementById('cs-cnt').value = '';
-  document.getElementById('cs-follow').value = '';
-  const arr = getCounsels(); arr.unshift(item); saveCounsels(arr); renderCounsels();
+// ═══════════════════════════════════════════
+let counsels=[];
+async function loadCounseling() { counsels=await apiGet('getCounseling')||[]; renderCounseling(); }
+async function addCounsel() {
+  const stu=document.getElementById('cs-stu').value.trim(); if(!stu)return;
+  const cnt=document.getElementById('cs-cnt').value.trim(); if(!cnt)return;
+  document.getElementById('cs-cnt').value=''; document.getElementById('cs-follow').value='';
+  await apiPost({action:'addCounseling',date:document.getElementById('cs-date').value,student:stu,type:document.getElementById('cs-type').value,content:cnt,followUp:document.getElementById('cs-follow').value.trim()});
+  loadCounseling();
 }
-function deleteCounsel(id) {
-  if (!confirm('삭제?')) return;
-  saveCounsels(getCounsels().filter(c=>c.id!==id)); renderCounsels();
-}
-function renderCounsels() {
-  const list = document.getElementById('cs-list');
-  const arr  = getCounsels().slice(0,30);
-  if (!arr.length) { list.innerHTML='<div class="empty">상담 기록이 없어요</div>'; return; }
-  list.innerHTML = arr.map(c=>`<div class="list-item" style="align-items:flex-start;">
+async function deleteCounsel(id) { if(!confirm('삭제?'))return; await apiPost({action:'deleteCounseling',id}); loadCounseling(); }
+function renderCounseling() {
+  const list=document.getElementById('cs-list');
+  if(!counsels.length){list.innerHTML='<div class="empty">상담 기록이 없어요</div>';return;}
+  list.innerHTML=counsels.map(c=>`<div class="list-item" style="align-items:flex-start;">
     <div class="list-body">
       <div style="display:flex;gap:6px;align-items:center;margin-bottom:4px;">
         <span style="font-size:13px;font-weight:700;">${esc(c.student)}</span>
-        <span class="badge ct-${esc(c.type)}" style="font-size:10px;border-radius:4px;padding:2px 7px;">${esc(c.type)}</span>
+        <span class="ct-${esc(c.type)}">${esc(c.type)}</span>
         <span style="font-size:11px;color:var(--hint);">${esc(c.date)}</span>
       </div>
       <div style="font-size:13px;white-space:pre-wrap;word-break:break-all;">${esc(c.content)}</div>
       ${c.followUp?`<div style="font-size:11px;color:var(--blue);margin-top:4px;">→ ${esc(c.followUp)}</div>`:''}
     </div>
-    <div class="list-actions"><button class="iBtn del" onclick="deleteCounsel('${c.id}')">삭제</button></div>
+    <div class="list-actions"><button class="iBtn del" onclick="deleteCounsel(${c.id})">삭제</button></div>
   </div>`).join('');
 }
 
-// ═══════════════════════════════════════════════
+// ═══════════════════════════════════════════
 // 학생 명단
-// ═══════════════════════════════════════════════
-let stuEditNum = null;
-function getStudents()   { return LS.get('students'); }
-function saveStudents(v) { LS.set('students', v); }
+// ═══════════════════════════════════════════
+let stuEditNum=null;
+async function loadStudents() { stuList=await apiGet('getStudents')||[]; renderStudents(); renderBdays(); }
 function openStuModal(num) {
-  stuEditNum = num || null;
-  document.getElementById('stu-modal-ttl').textContent = num ? '학생 수정' : '학생 추가';
-  if (num) {
-    const s = getStudents().find(x=>x.number===num)||{};
-    document.getElementById('sm-num').value   = s.number||'';
-    document.getElementById('sm-name').value  = s.name||'';
-    document.getElementById('sm-bday').value  = s.birthday||'';
-    document.getElementById('sm-phone').value = s.parentPhone||'';
-    document.getElementById('sm-note').value  = s.note||'';
-  } else {
-    ['sm-num','sm-name','sm-bday','sm-phone','sm-note'].forEach(id=>document.getElementById(id).value='');
-  }
+  stuEditNum=num||null;
+  document.getElementById('stu-modal-ttl').textContent=num?'학생 수정':'학생 추가';
+  if(num){const s=stuList.find(x=>x.number===num)||{};
+    document.getElementById('sm-num').value=s.number||''; document.getElementById('sm-name').value=s.name||'';
+    document.getElementById('sm-bday').value=s.birthday||''; document.getElementById('sm-phone').value=s.parentPhone||''; document.getElementById('sm-note').value=s.note||'';
+  } else { ['sm-num','sm-name','sm-bday','sm-phone','sm-note'].forEach(id=>document.getElementById(id).value=''); }
   openModal('stu-modal');
 }
-function saveStu() {
-  const name = document.getElementById('sm-name').value.trim(); if (!name) return;
-  const s = {
-    number: document.getElementById('sm-num').value.trim(),
-    name, birthday: document.getElementById('sm-bday').value,
-    parentPhone: document.getElementById('sm-phone').value.trim(),
-    note: document.getElementById('sm-note').value.trim()
-  };
-  let stus = getStudents();
-  if (stuEditNum) stus = stus.map(x => x.number===stuEditNum ? s : x);
-  else stus.push(s);
-  saveStudents(stus); closeModal('stu-modal'); renderStudents(); renderBdays();
+async function saveStu() {
+  const name=document.getElementById('sm-name').value.trim(); if(!name)return;
+  const s={number:document.getElementById('sm-num').value.trim(),name,birthday:document.getElementById('sm-bday').value,parentPhone:document.getElementById('sm-phone').value.trim(),note:document.getElementById('sm-note').value.trim()};
+  await apiPost({action:stuEditNum?'updateStudent':'addStudent',...s});
+  closeModal('stu-modal'); loadStudents();
 }
-function deleteStu(num) {
-  if (!confirm('삭제?')) return;
-  saveStudents(getStudents().filter(s=>s.number!==num)); renderStudents(); renderBdays();
-}
+async function deleteStu(num) { if(!confirm('삭제?'))return; await apiPost({action:'deleteStudent',number:num}); loadStudents(); }
 function renderStudents() {
-  const list = document.getElementById('stu-list');
-  const stus = getStudents();
-  if (!stus.length) { list.innerHTML='<div class="empty">+ 추가 버튼으로 학생을 등록해주세요</div>'; return; }
-  list.innerHTML = `<table style="width:100%;border-collapse:collapse;font-size:13px;">
+  const list=document.getElementById('stu-list');
+  if(!stuList.length){list.innerHTML='<div class="empty">+ 추가 버튼으로 학생을 등록해주세요</div>';return;}
+  list.innerHTML=`<table style="width:100%;border-collapse:collapse;font-size:13px;">
     <thead><tr style="background:var(--bg);">${['번호','이름','생일','연락처',''].map(h=>`<th style="padding:8px 6px;text-align:left;border-bottom:1px solid var(--border);font-size:11px;color:var(--muted);">${h}</th>`).join('')}</tr></thead>
-    <tbody>${stus.map(s=>`<tr>
+    <tbody>${stuList.map(s=>`<tr>
       <td style="padding:8px 6px;border-bottom:1px solid var(--border);">${esc(s.number)}</td>
       <td style="padding:8px 6px;border-bottom:1px solid var(--border);font-weight:700;">${esc(s.name)}</td>
       <td style="padding:8px 6px;border-bottom:1px solid var(--border);color:var(--muted);">${esc(s.birthday)}</td>
@@ -759,19 +770,16 @@ function renderStudents() {
     </tr>`).join('')}</tbody></table>`;
 }
 function renderBdays() {
-  const el   = document.getElementById('home-bday');
-  const stus = getStudents().filter(s=>s.birthday);
-  if (!stus.length) { el.innerHTML='<div class="empty">학생 명단을 등록해주세요</div>'; return; }
-  const base = new Date(TODAY);
-  const upcoming = stus.map(s=>{
-    const md   = s.birthday.slice(5);
-    const next = new Date(base.getFullYear()+'-'+md);
-    if (next < base) next.setFullYear(next.getFullYear()+1);
-    const diff = Math.round((next-base)/(1000*60*60*24));
-    return {...s, diff};
+  const el=document.getElementById('home-bday');
+  if(!stuList.length){el.innerHTML='<div class="empty">학생 명단을 등록해주세요</div>';return;}
+  const base=new Date(TODAY);
+  const upcoming=stuList.filter(s=>s.birthday).map(s=>{
+    const next=new Date(base.getFullYear()+'-'+s.birthday.slice(5));
+    if(next<base) next.setFullYear(next.getFullYear()+1);
+    return{...s,diff:Math.round((next-base)/(1000*60*60*24))};
   }).filter(s=>s.diff<=7).sort((a,b)=>a.diff-b.diff);
-  if (!upcoming.length) { el.innerHTML='<div class="empty">이번 주 생일인 학생이 없어요</div>'; return; }
-  el.innerHTML = upcoming.map(s=>s.diff===0
+  if(!upcoming.length){el.innerHTML='<div class="empty">이번 주 생일인 학생이 없어요</div>';return;}
+  el.innerHTML=upcoming.map(s=>s.diff===0
     ?`<div style="background:var(--amber-bg);border-radius:8px;padding:8px 12px;margin-bottom:6px;font-size:13px;font-weight:700;color:var(--amber);">🎂 오늘 생일! ${esc(s.name)}</div>`
     :`<div style="display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid var(--border);">
         <span style="font-size:18px;">🎂</span>
@@ -780,199 +788,95 @@ function renderBdays() {
   ).join('');
 }
 
-// ═══════════════════════════════════════════════
+// ═══════════════════════════════════════════
 // 시간표
-// ═══════════════════════════════════════════════
-function getTT()   { return LS.get('timetable', {}); }
-function saveTT(v) { LS.set('timetable', v); }
-
-function getTTForWeek(ws) {
-  const tt = getTT();
-  if (tt[ws] && tt[ws].length) return tt[ws];          // 해당 주 있으면
-  if (tt['default'] && tt['default'].length) return tt['default']; // 없으면 기본
-  return [];
+// ═══════════════════════════════════════════
+let ttData=[];
+async function loadTTEdit() {
+  const ws=document.getElementById('tt-week').value||WEEK_MON;
+  ttData=await apiGet('getTimetable',{weekStart:ws})||[];
+  renderTTEdit(); renderHomeTT();
 }
-
-function loadTTEdit() {
-  const ws   = document.getElementById('tt-week').value || WEEK_MON;
-  const rows = getTTForWeek(ws);
-  const rowMap = {};
-  rows.forEach(r => rowMap[r.period] = r);
-  const todayCI = DOW>=1&&DOW<=5 ? DOW-1 : -1;
-  const heads = ['월','화','수','목','금'];
-  const thead = `<thead><tr><th style="width:52px;">교시</th>${heads.map((d,i)=>`<th${i===todayCI?' class="tc"':''}>${d}${i===todayCI?'<span class="tbadge">오늘</span>':''}</th>`).join('')}</tr></thead>`;
-  const tbody = '<tbody>'+PERIODS.map(p=>{
-    const r = rowMap[p]||{};
-    return `<tr><td class="pl">${p}</td>${DAYS.map((d,i)=>{
-      const v=r[d]||'', isT=i===todayCI;
-      return `<td><input type="text" value="${esc(v)}" id="tte-${p}-${d}" placeholder="공강" style="width:100%;text-align:center;font-size:12px;padding:4px 2px;border:1px solid var(--border);border-radius:4px;background:${v?'var(--blue-bg)':'transparent'};color:${v?'var(--blue)':'var(--hint)'}" oninput="this.style.background=this.value?'var(--blue-bg)':'transparent';this.style.color=this.value?'var(--blue)':'var(--hint)'"></td>`;
+function renderTTEdit() {
+  const table=document.getElementById('tt-edit');
+  const rowMap={}; ttData.forEach(r=>rowMap[r.period]=r);
+  const heads=['월','화','수','목','금'];
+  const thead=`<thead><tr><th style="width:52px;">교시</th>${heads.map((d,i)=>`<th${i===DOW-1&&DOW>=1&&DOW<=5?' class="tc"':''}>${d}${i===DOW-1&&DOW>=1&&DOW<=5?'<span class="tbadge">오늘</span>':''}</th>`).join('')}</tr></thead>`;
+  const tbody='<tbody>'+PERIODS.map(p=>{
+    const r=rowMap[p]||{};
+    return`<tr><td class="pl">${p}</td>${DAYS.map((d,i)=>{
+      const v=r[d]||'',isT=i===DOW-1&&DOW>=1&&DOW<=5;
+      return`<td><input type="text" value="${esc(v)}" id="tte-${p}-${d}" placeholder="공강" style="width:100%;text-align:center;font-size:12px;padding:4px 2px;border:1px solid var(--border);border-radius:4px;background:${v?'var(--blue-bg)':'transparent'};color:${v?'var(--blue)':'var(--hint)'}" oninput="this.style.background=this.value?'var(--blue-bg)':'transparent';this.style.color=this.value?'var(--blue)':'var(--hint)'"></td>`;
     }).join('')}</tr>`;
   }).join('')+'</tbody>';
-  document.getElementById('tt-edit').innerHTML = thead+tbody;
+  table.innerHTML=thead+tbody;
 }
-
 function getTTInputRows() {
-  return PERIODS.map(p => ({
-    period: p,
-    mon: document.getElementById(`tte-${p}-mon`)?.value.trim()||'',
-    tue: document.getElementById(`tte-${p}-tue`)?.value.trim()||'',
-    wed: document.getElementById(`tte-${p}-wed`)?.value.trim()||'',
-    thu: document.getElementById(`tte-${p}-thu`)?.value.trim()||'',
-    fri: document.getElementById(`tte-${p}-fri`)?.value.trim()||'',
-  }));
+  return PERIODS.map(p=>({period:p,mon:document.getElementById(`tte-${p}-mon`)?.value.trim()||'',tue:document.getElementById(`tte-${p}-tue`)?.value.trim()||'',wed:document.getElementById(`tte-${p}-wed`)?.value.trim()||'',thu:document.getElementById(`tte-${p}-thu`)?.value.trim()||'',fri:document.getElementById(`tte-${p}-fri`)?.value.trim()||''}));
 }
-function saveTTWeek() {
-  const ws = document.getElementById('tt-week').value || WEEK_MON;
-  const tt = getTT(); tt[ws] = getTTInputRows(); saveTT(tt);
-  alert('저장됐어요!'); renderHomeTT();
+async function saveTTWeek() {
+  const ws=document.getElementById('tt-week').value||WEEK_MON;
+  await apiPost({action:'saveTimetable',weekStart:ws,rows:getTTInputRows()});
+  alert('저장됐어요!'); loadTTEdit();
 }
-function saveTTDefault() {
-  const tt = getTT(); tt['default'] = getTTInputRows(); saveTT(tt);
-  alert('기본 시간표로 저장됐어요! 스크린샷 없는 주에 자동 표시됩니다.'); renderHomeTT();
+async function saveTTDefault() {
+  await apiPost({action:'saveTimetable',weekStart:'default',rows:getTTInputRows()});
+  alert('기본 시간표로 저장됐어요!'); loadTTEdit();
 }
 function renderHomeTT() {
-  const table = document.getElementById('home-tt');
-  const ws    = document.getElementById('tt-week')?.value || WEEK_MON;
-  document.getElementById('home-wk-lbl').textContent = ws + ' 주';
-  const rows  = getTTForWeek(ws);
-  const rowMap = {}; rows.forEach(r => rowMap[r.period] = r);
-  const todayCI = DOW>=1&&DOW<=5 ? DOW-1 : -1;
-  const heads = ['월','화','수','목','금'];
-  const thead = `<thead><tr><th style="width:52px;">교시</th>${heads.map((d,i)=>`<th${i===todayCI?' class="tc"':''}>${d}${i===todayCI?'<span class="tbadge">오늘</span>':''}</th>`).join('')}</tr></thead>`;
-  const tbody = '<tbody>'+PERIODS.map(p=>{
-    const r=rowMap[p]||{};
-    return `<tr><td class="pl">${p}</td>${DAYS.map((d,i)=>{
-      const v=r[d]||'', isT=i===todayCI;
-      return `<td class="${v?'rc':'fc'}${isT?' tc':''}">${v||'공강'}</td>`;
-    }).join('')}</tr>`;
-  }).join('')+'</tbody>';
-  table.innerHTML = thead+tbody;
-
-  // 오늘 수업
-  const clsEl = document.getElementById('home-cls');
-  if (todayCI >= 0) {
-    const cls = PERIODS.map(p=>({p,rm:(rowMap[p]||{})[DAYS[todayCI]]||''})).filter(c=>c.rm);
-    clsEl.innerHTML = cls.length
-      ? cls.map(c=>`<div style="display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--border);">
-          <span style="font-size:11px;color:var(--muted);min-width:36px;">${c.p}</span>
-          <span style="font-size:14px;font-weight:700;color:var(--blue);">${c.rm}호</span></div>`).join('')
-        + `<div style="font-size:11px;color:var(--muted);margin-top:8px;">총 ${cls.length}교시</div>`
-      : '<div class="empty">오늘은 수업이 없어요</div>';
-  } else clsEl.innerHTML = '<div class="empty">오늘은 주말이에요 🎉</div>';
+  const table=document.getElementById('home-tt'), ws=document.getElementById('tt-week')?.value||WEEK_MON;
+  document.getElementById('home-wk-lbl').textContent=ws+' 주';
+  const rowMap={}; ttData.forEach(r=>rowMap[r.period]=r);
+  const todayCI=DOW>=1&&DOW<=5?DOW-1:-1;
+  const heads=['월','화','수','목','금'];
+  table.innerHTML=`<thead><tr><th style="width:52px;">교시</th>${heads.map((d,i)=>`<th${i===todayCI?' class="tc"':''}>${d}${i===todayCI?'<span class="tbadge">오늘</span>':''}</th>`).join('')}</tr></thead>`+
+    '<tbody>'+PERIODS.map(p=>{const r=rowMap[p]||{};return`<tr><td class="pl">${p}</td>${DAYS.map((d,i)=>{const v=r[d]||'',isT=i===todayCI;return`<td class="${v?'rc':'fc'}${isT?' tc':''}">${v||'공강'}</td>`;}).join('')}</tr>`;}).join('')+'</tbody>';
+  const clsEl=document.getElementById('home-cls');
+  if(todayCI>=0){const cls=PERIODS.map(p=>({p,rm:(rowMap[p]||{})[DAYS[todayCI]]||''})).filter(c=>c.rm);
+    clsEl.innerHTML=cls.length?cls.map(c=>`<div style="display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--border);"><span style="font-size:11px;color:var(--muted);min-width:36px;">${c.p}</span><span style="font-size:14px;font-weight:700;color:var(--blue);">${c.rm}호</span></div>`).join('')+`<div style="font-size:11px;color:var(--muted);margin-top:8px;">총 ${cls.length}교시</div>`:'<div class="empty">오늘은 수업이 없어요</div>';
+  } else clsEl.innerHTML='<div class="empty">오늘은 주말이에요 🎉</div>';
 }
 
-// ── 시간표 AI 인식 ────────────────────────────
+// ── 시간표 AI 인식 ───────────────────────────
 let ttImgB64='', ttImgMime='';
-function onTTFile(file) {
-  if (!file) return;
-  ttImgMime = file.type;
-  const r = new FileReader();
-  r.onload = e => {
-    ttImgB64 = e.target.result.split(',')[1];
-    const img = document.getElementById('tt-prev');
-    img.src = e.target.result; img.style.display = 'block';
-    document.getElementById('tt-drop-txt').style.display = 'none';
-    document.getElementById('tt-ai-btn').style.display = 'flex';
-    document.getElementById('tt-ai-msg').textContent = '';
-  };
+function onTTFile(file){
+  if(!file)return; ttImgMime=file.type;
+  const r=new FileReader();
+  r.onload=e=>{ttImgB64=e.target.result.split(',')[1];const img=document.getElementById('tt-prev');img.src=e.target.result;img.style.display='block';document.getElementById('tt-drop-txt').style.display='none';document.getElementById('tt-ai-btn').style.display='flex';document.getElementById('tt-ai-msg').textContent='';};
   r.readAsDataURL(file);
 }
-function onTTDrop(e) {
-  e.preventDefault(); document.getElementById('tt-drop').classList.remove('over');
-  const f = e.dataTransfer.files[0];
-  if (f && f.type.startsWith('image/')) onTTFile(f);
-}
-document.addEventListener('paste', e => {
-  const items = [...(e.clipboardData?.items||[])];
-  const img = items.find(i=>i.type.startsWith('image/'));
-  if (img) onTTFile(img.getAsFile());
-});
-
-async function runTTAI() {
-  const key = getAPIKey();
-  if (!key) { alert('⚙️ 설정에서 API 키를 입력해주세요.'); return; }
-  if (!ttImgB64) { alert('이미지를 먼저 업로드해주세요.'); return; }
-  const ws  = document.getElementById('tt-week').value || WEEK_MON;
-  const btn = document.getElementById('tt-ai-btn');
-  const lbl = document.getElementById('tt-ai-lbl');
-  const msg = document.getElementById('tt-ai-msg');
-  btn.disabled = true; lbl.innerHTML = '<div class="spinner"></div> 인식 중...'; msg.textContent = '';
-  try {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: { 'Content-Type':'application/json', 'x-api-key':key, 'anthropic-version':'2023-06-01', 'anthropic-dangerous-direct-browser-access':'true' },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514', max_tokens: 1500,
-        system: `이미지에서 시간표를 읽어 반드시 아래 JSON 형식으로만 응답하세요. 다른 말은 하지 마세요.
-{"rows":[{"period":"1교시","mon":"","tue":"","wed":"","thu":"","fri":""},...]}
-교시가 없거나 공강이면 빈 문자열. 강의실 번호나 과목명 그대로 입력.`,
-        messages: [{ role:'user', content:[
-          { type:'image', source:{ type:'base64', media_type:ttImgMime, data:ttImgB64 } },
-          { type:'text',  text:'이 시간표를 JSON으로 변환해주세요.' }
-        ]}]
-      })
-    });
-    const data   = await res.json();
-    if (data.error) throw new Error(data.error.message);
-    const raw    = data.content.map(c=>c.text||'').join('');
-    const parsed = JSON.parse(raw.replace(/```json|```/g,'').trim());
-    if (parsed.rows?.length) {
-      const tt = getTT();
-      tt[ws] = parsed.rows.map(r=>({ period:r.period, mon:r.mon||'', tue:r.tue||'', wed:r.wed||'', thu:r.thu||'', fri:r.fri||'' }));
-      saveTT(tt);
-      loadTTEdit(); renderHomeTT();
-      msg.innerHTML = '<span style="color:var(--green);font-weight:700;">✓ 시간표 인식 완료! 저장됐어요.</span>';
-    }
-  } catch(e) {
-    msg.innerHTML = `<span style="color:var(--red);">오류: ${esc(e.message)}</span>`;
-  } finally {
-    btn.disabled = false; lbl.textContent = '✨ AI로 시간표 인식하기';
-  }
+function onTTDrop(e){e.preventDefault();document.getElementById('tt-drop').classList.remove('over');const f=e.dataTransfer.files[0];if(f&&f.type.startsWith('image/'))onTTFile(f);}
+document.addEventListener('paste',e=>{const items=[...(e.clipboardData?.items||[])];const img=items.find(i=>i.type.startsWith('image/'));if(img)onTTFile(img.getAsFile());});
+async function runTTAI(){
+  const key=getApiKey(); if(!key){alert('⚙️ 설정에서 API 키를 입력해주세요.');return;}
+  if(!ttImgB64){alert('이미지를 먼저 업로드해주세요.');return;}
+  const ws=document.getElementById('tt-week').value||WEEK_MON;
+  const btn=document.getElementById('tt-ai-btn'),lbl=document.getElementById('tt-ai-lbl'),msg=document.getElementById('tt-ai-msg');
+  btn.disabled=true;lbl.innerHTML='<div class="spinner"></div> 인식 중...';msg.textContent='';
+  const res=await apiPost({action:'analyzeTimetable',apiKey:key,imageData:ttImgB64,mimeType:ttImgMime,weekStart:ws});
+  if(res){msg.innerHTML='<span style="color:var(--green);font-weight:700;">✓ 시간표 인식 완료! 저장됐어요.</span>';loadTTEdit();}
+  else{msg.innerHTML='<span style="color:var(--red);">오류가 발생했어요. API 키와 GAS URL을 확인해주세요.</span>';}
+  btn.disabled=false;lbl.textContent='✨ AI로 시간표 인식하기';
 }
 
-// ═══════════════════════════════════════════════
+// ═══════════════════════════════════════════
 // AI 메시지 분석
-// ═══════════════════════════════════════════════
-async function runMsgAI() {
-  const key = getAPIKey();
-  if (!key) { alert('⚙️ 설정에서 API 키를 입력해주세요.'); return; }
-  const msg = document.getElementById('ai-msg').value.trim();
-  if (!msg) { alert('메시지를 입력해주세요.'); return; }
-  const btn = document.getElementById('ai-msg-btn');
-  const lbl = document.getElementById('ai-msg-lbl');
-  const out = document.getElementById('ai-msg-out');
-  btn.disabled = true; lbl.innerHTML = '<div class="spinner"></div> 분석 중...'; out.innerHTML = '';
-  try {
-    const today = now.getFullYear()+'년 '+(now.getMonth()+1)+'월 '+now.getDate()+'일';
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: { 'Content-Type':'application/json', 'x-api-key':key, 'anthropic-version':'2023-06-01', 'anthropic-dangerous-direct-browser-access':'true' },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514', max_tokens: 1000,
-        system: `당신은 교사를 돕는 할 일 추출 AI입니다. 오늘 날짜는 ${today}입니다.
-메시지에서 해야 할 일을 추출해서 반드시 아래 JSON 형식으로만 응답하세요. 다른 말은 하지 마세요.
-{"tasks":[{"text":"할 일 내용(20자 이내)","due":"YYYY-MM-DD 또는 빈 문자열","priority":"high/mid/low","reason":"이유 한 줄"}]}
-마감 3일 이내=high, 일주일 이내=mid, 그 외=low.`,
-        messages: [{ role:'user', content: msg }]
-      })
-    });
-    const data   = await res.json();
-    if (data.error) throw new Error(data.error.message);
-    const raw    = data.content.map(c=>c.text||'').join('');
-    const parsed = JSON.parse(raw.replace(/```json|```/g,'').trim());
-    renderAIOut(parsed.tasks||[], out);
-  } catch(e) {
-    out.innerHTML = `<div style="color:var(--red);font-size:13px;padding:8px 0;">오류: ${esc(e.message)}</div>`;
-  } finally {
-    btn.disabled = false; lbl.textContent = '✨ AI로 할 일 추출하기';
-  }
+// ═══════════════════════════════════════════
+async function runMsgAI(){
+  const key=getApiKey(); if(!key){alert('⚙️ 설정에서 API 키를 입력해주세요.');return;}
+  const msg=document.getElementById('ai-msg').value.trim(); if(!msg){alert('메시지를 입력해주세요.');return;}
+  const btn=document.getElementById('ai-msg-btn'),lbl=document.getElementById('ai-msg-lbl'),out=document.getElementById('ai-msg-out');
+  btn.disabled=true;lbl.innerHTML='<div class="spinner"></div> 분석 중...';out.innerHTML='';
+  const result=await apiPost({action:'analyzeMessage',apiKey:key,message:msg});
+  if(result?.tasks){renderAIOut(result.tasks,out);}
+  else{out.innerHTML='<div style="color:var(--red);font-size:13px;padding:8px 0;">오류가 발생했어요.</div>';}
+  btn.disabled=false;lbl.textContent='✨ AI로 할 일 추출하기';
 }
-function renderAIOut(tasks, el) {
-  if (!tasks.length) { el.innerHTML='<div class="empty" style="margin-top:8px;">추출된 할 일이 없어요</div>'; return; }
-  el.innerHTML = `<div style="font-size:12px;color:var(--purple);font-weight:700;margin:10px 0 6px;">📋 ${tasks.length}개 항목 추출됨</div>` +
-    tasks.map((t,i) => {
-      const dD = t.due?(()=>{const d=new Date(t.due+'T00:00:00');return(d.getMonth()+1)+'/'+(d.getDate());})():'마감 없음';
-      return `<div class="ai-result-item" id="air-${i}">
+function renderAIOut(tasks,el){
+  if(!tasks.length){el.innerHTML='<div class="empty" style="margin-top:8px;">추출된 할 일이 없어요</div>';return;}
+  el.innerHTML=`<div style="font-size:12px;color:var(--purple);font-weight:700;margin:10px 0 6px;">📋 ${tasks.length}개 항목 추출됨</div>`+
+    tasks.map((t,i)=>{const dD=t.due?(()=>{const d=new Date(t.due+'T00:00:00');return(d.getMonth()+1)+'/'+(d.getDate());})():'마감 없음';
+      return`<div class="ai-result-item" id="air-${i}">
         <div style="font-size:13px;font-weight:700;">${esc(t.text)}</div>
         <div style="display:flex;gap:6px;margin-top:4px;flex-wrap:wrap;align-items:center;">
           <span class="badge ${PC[t.priority]||'badge-mid'}">${PL[t.priority]||'보통'}</span>
@@ -986,112 +890,138 @@ function renderAIOut(tasks, el) {
       </div>`;
     }).join('');
 }
-function addFromAI(i, text, due, priority) {
-  const btn = document.getElementById('air-add-'+i);
-  btn.disabled = true; btn.textContent = '추가 중...';
-  addTodo(text, due, priority);
-  btn.textContent = '✓ 추가됨'; btn.classList.add('added');
-  document.getElementById('air-'+i).style.opacity = '0.5';
+async function addFromAI(i,text,due,priority){
+  const btn=document.getElementById('air-add-'+i); btn.disabled=true;btn.textContent='추가 중...';
+  await apiPost({action:'addTodo',text,due,priority}); await loadTodos();
+  btn.textContent='✓ 추가됨';btn.classList.add('added');document.getElementById('air-'+i).style.opacity='0.5';
 }
-function skipAI(i) {
-  const item = document.getElementById('air-'+i);
-  item.style.opacity = '0.35'; item.querySelectorAll('button').forEach(b=>b.disabled=true);
-}
+function skipAI(i){const item=document.getElementById('air-'+i);item.style.opacity='0.35';item.querySelectorAll('button').forEach(b=>b.disabled=true);}
 
-// ═══════════════════════════════════════════════
+// ═══════════════════════════════════════════
 // 바로가기
-// ═══════════════════════════════════════════════
-let scSelColor = '#E6F1FB';
-const SC_COLORS = ['#E6F1FB','#EAF3DE','#FAEEDA','#EEEDFE','#FCEBEB','#F5F4F0'];
+// ═══════════════════════════════════════════
+let shortcuts=[], scSelColor='#E6F1FB';
+const SC_COLORS=['#E6F1FB','#EAF3DE','#FAEEDA','#EEEDFE','#FCEBEB','#F5F4F0'];
+const scColorEl=document.getElementById('sc-colors');
+SC_COLORS.forEach((c,i)=>{const d=document.createElement('div');d.className='color-opt'+(i===0?' sel':'');d.style.background=c;d.onclick=()=>{scSelColor=c;document.querySelectorAll('#sc-colors .color-opt').forEach(x=>x.classList.remove('sel'));d.classList.add('sel');};scColorEl.appendChild(d);});
 
-const scColorEl = document.getElementById('sc-colors');
-SC_COLORS.forEach((c,i) => {
-  const d = document.createElement('div');
-  d.className = 'color-opt'+(i===0?' sel':''); d.style.background = c;
-  d.onclick = () => { scSelColor=c; document.querySelectorAll('#sc-colors .color-opt').forEach(x=>x.classList.remove('sel')); d.classList.add('sel'); };
-  scColorEl.appendChild(d);
-});
-
-function getSCs()   { return LS.get('shortcuts'); }
-function saveSCs(v) { LS.set('shortcuts', v); }
-function getIcon(url) {
-  if(url.includes('drive.google'))return'📁'; if(url.includes('classroom.google'))return'🖥️';
-  if(url.includes('docs.google'))return'📄'; if(url.includes('sheets.google'))return'📊';
-  if(url.includes('neis'))return'👤'; if(url.includes('youtube'))return'▶️';
-  if(url.includes('github'))return'🐱'; if(url.includes('notion'))return'📝'; return'🔗';
-}
-function openScModal() { document.getElementById('scm-label').value=''; document.getElementById('scm-url').value=''; openModal('sc-modal'); }
-function saveSc() {
+async function loadShortcuts(){shortcuts=await apiGet('getShortcuts')||[];renderShortcuts();}
+function openScModal(){document.getElementById('scm-label').value='';document.getElementById('scm-url').value='';openModal('sc-modal');}
+function getIcon(url){if(url.includes('drive.google'))return'📁';if(url.includes('classroom.google'))return'🖥️';if(url.includes('docs.google'))return'📄';if(url.includes('sheets.google'))return'📊';if(url.includes('neis'))return'👤';if(url.includes('youtube'))return'▶️';if(url.includes('github'))return'🐱';if(url.includes('notion'))return'📝';return'🔗';}
+async function saveSc(){
   const label=document.getElementById('scm-label').value.trim(); if(!label)return;
   const url=document.getElementById('scm-url').value.trim(); if(!url)return;
-  const full = url.startsWith('http')?url:'https://'+url;
-  const arr  = getSCs();
-  arr.push({ id:uid(), label, url:full, color:scSelColor, icon:getIcon(full) });
-  saveSCs(arr); closeModal('sc-modal'); renderSCs();
+  const full=url.startsWith('http')?url:'https://'+url;
+  await apiPost({action:'addShortcut',label,url:full,color:scSelColor,icon:getIcon(full)});
+  closeModal('sc-modal');loadShortcuts();
 }
-function deleteSC(id) {
-  if (!confirm('삭제?')) return;
-  saveSCs(getSCs().filter(s=>s.id!==id)); renderSCs();
-}
-function renderSCs() {
-  const list = document.getElementById('sc-list');
-  const arr  = getSCs();
-  if (!arr.length) { list.innerHTML='<div class="empty">바로가기를 추가해 보세요</div>'; return; }
-  list.innerHTML = arr.map(s=>`<a class="sc-item" href="${esc(s.url)}" target="_blank" rel="noopener">
+async function deleteSC(id){if(!confirm('삭제?'))return;await apiPost({action:'deleteShortcut',id});loadShortcuts();}
+function renderShortcuts(){
+  const list=document.getElementById('sc-list');
+  if(!shortcuts.length){list.innerHTML='<div class="empty">바로가기를 추가해 보세요</div>';return;}
+  list.innerHTML=shortcuts.map(s=>`<a class="sc-item" href="${esc(s.url)}" target="_blank" rel="noopener">
     <div class="sc-icon" style="background:${s.color}">${s.icon||'🔗'}</div>
-    <div style="min-width:0;">
-      <div style="font-size:13px;font-weight:700;">${esc(s.label)}</div>
-      <div style="font-size:11px;color:var(--hint);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${esc(s.url)}</div>
-    </div>
-    <button class="sc-del" onclick="event.preventDefault();deleteSC('${s.id}')">삭제</button>
+    <div style="min-width:0;"><div style="font-size:13px;font-weight:700;">${esc(s.label)}</div><div style="font-size:11px;color:var(--hint);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${esc(s.url)}</div></div>
+    <button class="sc-del" onclick="event.preventDefault();deleteSC(${s.id})">삭제</button>
   </a>`).join('');
 }
 
-// ═══════════════════════════════════════════════
-// 샘플 데이터 (첫 방문)
-// ═══════════════════════════════════════════════
-if (!localStorage.getItem('todos')) {
-  LS.set('todos', [
-    { id:uid(), text:'3학년 수행평가 채점', due: TODAY, priority:'high', done:false, createdAt:new Date().toISOString() },
-    { id:uid(), text:'학급 일지 정리',       due: TODAY, priority:'mid',  done:false, createdAt:new Date().toISOString() },
-    { id:uid(), text:'교무회의 자료 준비',   due: '',    priority:'mid',  done:false, createdAt:new Date().toISOString() },
-  ]);
+// ═══════════════════════════════════════════
+// 엑셀/CSV 일괄 등록
+// ═══════════════════════════════════════════
+let impRows=[], impHeaders=[];
+const IMP_FIELDS=[{key:'number',label:'번호'},{key:'name',label:'이름 *'},{key:'birthday',label:'생일'},{key:'parentPhone',label:'연락처'},{key:'note',label:'비고'}];
+
+function openImportModal(){resetImport();openModal('import-modal');}
+function resetImport(){
+  impRows=[];impHeaders=[];
+  ['imp-mapping','imp-preview','imp-err'].forEach(id=>document.getElementById(id).style.display='none');
+  document.getElementById('imp-ok').style.display='none';
+  document.getElementById('imp-drop').style.background='';
+  document.getElementById('imp-file').value='';
 }
-if (!localStorage.getItem('shortcuts')) {
-  LS.set('shortcuts', [
-    { id:uid(), label:'구글 드라이브',    url:'https://drive.google.com',     color:'#E6F1FB', icon:'📁' },
-    { id:uid(), label:'구글 클래스룸',    url:'https://classroom.google.com', color:'#EAF3DE', icon:'🖥️' },
-    { id:uid(), label:'나이스 교원서비스',url:'https://neis.go.kr',           color:'#EEEDFE', icon:'👤' },
-  ]);
+function onImpDrop(e){e.preventDefault();document.getElementById('imp-drop').style.background='';const f=e.dataTransfer.files[0];if(f)onImpFile(f);}
+function onImpFile(file){
+  if(!file)return;
+  const ext=file.name.split('.').pop().toLowerCase();
+  const reader=new FileReader();
+  if(ext==='csv'){reader.onload=e=>parseCSV(e.target.result);reader.readAsText(file,'UTF-8');}
+  else if(ext==='xlsx'||ext==='xls'){reader.onload=e=>parseXLSX(e.target.result);reader.readAsArrayBuffer(file);}
+  else{showImpErr('.xlsx 또는 .csv 파일만 지원해요.');}
 }
-if (!localStorage.getItem('timetable')) {
-  LS.set('timetable', { default: [
-    {period:'1교시',mon:'107',tue:'',   wed:'',   thu:'',   fri:''   },
-    {period:'2교시',mon:'',  tue:'',   wed:'106',thu:'',   fri:'102'},
-    {period:'3교시',mon:'',  tue:'105',wed:'103',thu:'106',fri:'105'},
-    {period:'4교시',mon:'',  tue:'',   wed:'',   thu:'102',fri:''   },
-    {period:'5교시',mon:'104',tue:'107',wed:'101',thu:'',  fri:'103'},
-    {period:'6교시',mon:'',  tue:'101',wed:'',   thu:'',   fri:'103'},
-    {period:'7교시',mon:'',  tue:'103',wed:'104',thu:'',   fri:''   },
-  ]});
+function parseCSV(text){
+  text=text.replace(/^\uFEFF/,'');
+  const lines=text.split(/\r?\n/).filter(l=>l.trim());
+  if(lines.length<2){showImpErr('데이터가 너무 적어요.');return;}
+  const rows=lines.map(l=>l.split(',').map(c=>c.replace(/^"|"$/g,'').trim()));
+  impHeaders=rows[0];impRows=rows.slice(1).filter(r=>r.some(c=>c));buildMapping();
+}
+function parseXLSX(buf){
+  try{
+    const wb=XLSX.read(buf,{type:'array',cellDates:true});
+    const ws=wb.Sheets[wb.SheetNames[0]];
+    const data=XLSX.utils.sheet_to_json(ws,{header:1,defval:''});
+    if(data.length<2){showImpErr('데이터가 너무 적어요.');return;}
+    impHeaders=data[0].map(String);
+    impRows=data.slice(1).map(r=>impHeaders.map((_,i)=>{const v=r[i];if(v instanceof Date){return v.getFullYear()+'-'+String(v.getMonth()+1).padStart(2,'0')+'-'+String(v.getDate()).padStart(2,'0');}return String(v??'').trim();})).filter(r=>r.some(c=>c));
+    buildMapping();
+  }catch(e){showImpErr('파일 읽기 오류: '+e.message);}
+}
+function buildMapping(){
+  const grid=document.getElementById('imp-map-grid');
+  const autoMap={};
+  IMP_FIELDS.forEach(f=>{const idx=impHeaders.findIndex(h=>h.includes(f.label.replace(' *',''))||(f.key==='number'&&(h.includes('번호')||h.includes('번')))||(f.key==='name'&&(h.includes('이름')||h.includes('성명')))||(f.key==='birthday'&&(h.includes('생일')||h.includes('생년')))||(f.key==='parentPhone'&&(h.includes('연락')||h.includes('전화'))));autoMap[f.key]=idx>=0?idx:-1;});
+  grid.innerHTML=IMP_FIELDS.map(f=>`<div><label style="font-size:11px;color:var(--muted);display:block;margin-bottom:3px;">${f.label}</label>
+    <select id="imp-sel-${f.key}" style="width:100%;font-size:12px;padding:5px 8px;" onchange="updatePreview()">
+      <option value="-1">(사용 안 함)</option>
+      ${impHeaders.map((h,i)=>`<option value="${i}" ${autoMap[f.key]===i?'selected':''}>${h}</option>`).join('')}
+    </select></div>`).join('');
+  document.getElementById('imp-mapping').style.display='block';updatePreview();
+}
+function getMapping(){const m={};IMP_FIELDS.forEach(f=>{const s=document.getElementById('imp-sel-'+f.key);m[f.key]=s?Number(s.value):-1;});return m;}
+function updatePreview(){
+  const m=getMapping(),prev=document.getElementById('imp-preview'),tbl=document.getElementById('imp-prev-tbl'),ttl=document.getElementById('imp-prev-ttl'),ok=document.getElementById('imp-ok');
+  if(m.name<0){showImpErr('이름 열은 반드시 선택해야 해요.');prev.style.display='none';ok.style.display='none';return;}
+  hideImpErr();
+  const preview=impRows.slice(0,5).map(r=>({number:m.number>=0?r[m.number]:'',name:m.name>=0?r[m.name]:'',birthday:m.birthday>=0?r[m.birthday]:'',parentPhone:m.parentPhone>=0?r[m.parentPhone]:'',note:m.note>=0?r[m.note]:''})).filter(s=>s.name);
+  ttl.textContent=`미리보기 (전체 ${impRows.filter(r=>m.name>=0&&r[m.name]).length}명 등록 예정)`;
+  tbl.innerHTML=`<thead><tr style="background:var(--bg);">${['번호','이름','생일','연락처','비고'].map(h=>`<th style="padding:6px 8px;text-align:left;border-bottom:1px solid var(--border);font-size:11px;color:var(--muted);">${h}</th>`).join('')}</tr></thead>`+
+    `<tbody>${preview.map(s=>`<tr>${['number','name','birthday','parentPhone','note'].map(k=>`<td style="padding:6px 8px;border-bottom:1px solid var(--border);">${esc(s[k])}</td>`).join('')}</tr>`).join('')}</tbody>`;
+  prev.style.display='block';ok.style.display='inline-flex';
+}
+async function confirmImport(){
+  const m=getMapping(); if(m.name<0){showImpErr('이름 열을 선택해주세요.');return;}
+  const students=impRows.map(r=>({number:m.number>=0?r[m.number]:'',name:m.name>=0?r[m.name]:'',birthday:m.birthday>=0?r[m.birthday]:'',parentPhone:m.parentPhone>=0?r[m.parentPhone]:'',note:m.note>=0?r[m.note]:''})).filter(s=>s.name.trim());
+  if(!students.length){showImpErr('등록할 학생이 없어요.');return;}
+  const res=await apiPost({action:'importStudents',students});
+  if(res){closeModal('import-modal');resetImport();loadStudents();alert(`✅ 등록 완료!\n추가: ${res.added}명${res.skipped?'\n중복 건너뜀: '+res.skipped+'명':''}`);}
+}
+function showImpErr(msg){const el=document.getElementById('imp-err');el.textContent='⚠️ '+msg;el.style.display='block';}
+function hideImpErr(){document.getElementById('imp-err').style.display='none';}
+
+// ═══════════════════════════════════════════
+// 초기 로드
+// ═══════════════════════════════════════════
+async function loadAll(){
+  if(!getGasUrl()){
+    // GAS URL 없으면 설정 안내
+    setTimeout(()=>{
+      if(!getGasUrl()) openSettings();
+    }, 500);
+    return;
+  }
+  loadTodos();
+  loadTTEdit();
+  stuList=await apiGet('getStudents')||[];
+  renderStudents(); renderBdays();
+  attData=await apiGet('getAttendance',{date:TODAY})||[];
+  renderHomeAtt();
+  notices=await apiGet('getNotices',{date:TODAY})||[];
+  renderHomeNtc();
+  loadShortcuts();
 }
 
-// ═══════════════════════════════════════════════
-// 초기 렌더
-// ═══════════════════════════════════════════════
-renderTodos();
-renderHomeTodos();
-renderHomeAtt();
-renderHomeNtc();
-renderBdays();
-renderSCs();
-renderStudents();
-renderContacts();
-renderCounsels();
-renderNotices();
-renderAtt();
-loadTTEdit();
-renderHomeTT();
+loadAll();
 </script>
 </body>
 </html>
