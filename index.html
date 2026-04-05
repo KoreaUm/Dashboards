@@ -1,1 +1,1097 @@
 
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>담임교사 대시보드</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg:#F5F4F0; --surface:#FFF; --border:#E2E0D8; --text:#1A1A18;
+  --muted:#6B6A64; --hint:#A8A79F;
+  --blue:#185FA5; --blue-bg:#E6F1FB;
+  --green:#3B6D11; --green-bg:#EAF3DE;
+  --amber:#854F0B; --amber-bg:#FAEEDA;
+  --purple:#534AB7; --purple-bg:#EEEDFE;
+  --red:#A32D2D; --red-bg:#FCEBEB;
+  --teal:#0F6E56; --teal-bg:#E1F5EE;
+  --radius:10px; --radius-sm:6px;
+}
+body { font-family:'Pretendard','Apple SD Gothic Neo','Noto Sans KR',sans-serif; background:var(--bg); color:var(--text); font-size:14px; line-height:1.5; min-height:100vh; }
+
+header { background:var(--surface); border-bottom:1px solid var(--border); padding:0 20px; height:52px; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:100; }
+header h1 { font-size:14px; font-weight:700; }
+.header-right { display:flex; align-items:center; gap:10px; }
+.header-date { font-size:12px; color:var(--muted); }
+.icon-btn-hdr { font-size:12px; padding:4px 10px; border:1px solid var(--border); border-radius:var(--radius-sm); background:none; color:var(--muted); cursor:pointer; font-family:inherit; }
+.icon-btn-hdr:hover { border-color:var(--blue); color:var(--blue); }
+
+.tab-nav { background:var(--surface); border-bottom:1px solid var(--border); padding:0 20px; display:flex; gap:2px; overflow-x:auto; }
+.tab-btn { font-size:12px; font-weight:600; padding:12px 14px; border:none; background:none; color:var(--muted); cursor:pointer; font-family:inherit; border-bottom:2px solid transparent; white-space:nowrap; transition:all .15s; }
+.tab-btn.active { color:var(--blue); border-bottom-color:var(--blue); }
+
+.tab-panel { display:none; padding:16px 20px; max-width:1200px; margin:0 auto; }
+.tab-panel.active { display:block; }
+
+.grid2 { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+.span2 { grid-column:1/-1; }
+
+.card { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:16px 18px; }
+.card-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:8px; }
+.card-title { font-size:11px; font-weight:700; letter-spacing:.07em; text-transform:uppercase; color:var(--muted); }
+
+input[type="text"],input[type="date"],input[type="url"],input[type="password"],input[type="tel"],select,textarea {
+  font-family:inherit; font-size:13px; padding:7px 11px;
+  border:1px solid var(--border); border-radius:var(--radius-sm);
+  background:var(--bg); color:var(--text); outline:none; transition:border-color .15s;
+}
+input:focus,select:focus,textarea:focus { border-color:var(--blue); background:#fff; }
+.flex1 { flex:1; }
+.row { display:flex; gap:8px; align-items:flex-start; flex-wrap:wrap; }
+.btn { font-family:inherit; font-size:13px; font-weight:700; padding:7px 14px; border-radius:var(--radius-sm); cursor:pointer; border:none; white-space:nowrap; transition:all .15s; }
+.btn-primary { background:var(--blue); color:#fff; }
+.btn-primary:hover { background:#0F4B80; }
+.btn-green  { background:var(--green); color:#fff; }
+.btn-green:hover { background:#285008; }
+.btn-purple { background:var(--purple); color:#fff; }
+.btn-purple:hover { background:#3D3490; }
+.btn-ghost { background:none; border:1px solid var(--border); color:var(--muted); }
+.btn-ghost:hover { border-color:var(--red); color:var(--red); }
+.btn-sm { font-size:11px; padding:4px 10px; }
+
+.badge { font-size:10px; border-radius:4px; padding:2px 7px; font-weight:700; display:inline-block; }
+.badge-high { background:var(--red-bg); color:var(--red); }
+.badge-mid  { background:var(--amber-bg); color:var(--amber); }
+.badge-low  { background:var(--green-bg); color:var(--green); }
+.chip { font-size:11px; padding:3px 10px; border-radius:20px; font-weight:700; }
+.chip-blue  { background:var(--blue-bg); color:var(--blue); }
+.chip-red   { background:var(--red-bg); color:var(--red); }
+.chip-green { background:var(--green-bg); color:var(--green); }
+
+.list-item { display:flex; align-items:flex-start; gap:8px; padding:9px 8px; border-bottom:1px solid var(--border); }
+.list-item:last-child { border-bottom:none; }
+.list-item:hover { background:var(--bg); border-radius:var(--radius-sm); }
+.list-body { flex:1; min-width:0; }
+.list-actions { display:flex; gap:4px; flex-shrink:0; }
+.iBtn { font-size:11px; padding:3px 7px; border-radius:4px; cursor:pointer; border:1px solid var(--border); background:none; font-family:inherit; color:var(--muted); transition:all .15s; }
+.iBtn:hover { border-color:var(--blue); color:var(--blue); }
+.iBtn.del:hover { border-color:var(--red); color:var(--red); }
+
+/* 투두 */
+.todo-text { font-size:13px; }
+.todo-text.done { text-decoration:line-through; color:var(--hint); }
+.todo-meta { display:flex; gap:5px; margin-top:3px; flex-wrap:wrap; align-items:center; }
+.due-label { font-size:11px; color:var(--muted); }
+.due-label.overdue  { color:var(--red); font-weight:700; }
+.due-label.duetoday { color:var(--amber); font-weight:700; }
+.chk { width:15px; height:15px; accent-color:var(--blue); cursor:pointer; flex-shrink:0; margin-top:2px; }
+
+/* 출석 */
+.att-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(155px,1fr)); gap:8px; }
+.att-card { border:1px solid var(--border); border-radius:var(--radius-sm); padding:10px 12px; background:var(--bg); }
+.att-name { font-size:13px; font-weight:700; margin-bottom:6px; }
+.att-row  { display:flex; gap:4px; flex-wrap:wrap; }
+.aBtn { font-size:10px; padding:3px 7px; border:1px solid var(--border); border-radius:4px; background:none; cursor:pointer; font-family:inherit; transition:all .15s; }
+.aBtn.a-결석 { background:var(--red-bg); color:var(--red); border-color:var(--red); font-weight:700; }
+.aBtn.a-지각 { background:var(--amber-bg); color:var(--amber); border-color:var(--amber); font-weight:700; }
+.aBtn.a-조퇴 { background:var(--purple-bg); color:var(--purple); border-color:var(--purple); font-weight:700; }
+.aBtn.a-병결 { background:var(--teal-bg); color:var(--teal); border-color:var(--teal); font-weight:700; }
+
+/* 시간표 */
+.tt-table { width:100%; border-collapse:collapse; font-size:12px; table-layout:fixed; }
+.tt-table th { background:var(--bg); color:var(--muted); padding:7px 4px; font-weight:700; text-align:center; border:1px solid var(--border); font-size:11px; }
+.tt-table th.tc { background:var(--blue-bg); color:var(--blue); }
+.tt-table td { padding:7px 4px; text-align:center; border:1px solid var(--border); font-size:12px; }
+.pl  { color:var(--muted); font-size:11px; font-weight:700; background:var(--bg); }
+.rc  { color:var(--blue); font-weight:700; background:var(--blue-bg); }
+.fc  { color:var(--hint); font-size:11px; }
+.tc  { background:#F0F7FF !important; }
+.rc.tc { background:#C8E1F7 !important; }
+.tbadge { display:inline-block; font-size:9px; background:var(--blue); color:#fff; border-radius:3px; padding:1px 4px; margin-left:3px; vertical-align:middle; font-weight:700; }
+
+/* AI 패널 */
+.ai-panel { border:1.5px solid var(--purple); border-radius:var(--radius); background:var(--surface); padding:16px 18px; }
+.ai-badge { font-size:10px; background:var(--purple-bg); color:var(--purple); border-radius:20px; padding:2px 8px; font-weight:700; }
+.ai-btn { width:100%; margin-top:8px; padding:10px; border:none; border-radius:var(--radius-sm); font-size:13px; font-weight:700; cursor:pointer; font-family:inherit; display:flex; align-items:center; justify-content:center; gap:8px; }
+.ai-btn:disabled { background:var(--hint)!important; cursor:not-allowed; }
+.drop-zone { border:2px dashed var(--purple); border-radius:var(--radius-sm); padding:20px; text-align:center; cursor:pointer; color:var(--muted); font-size:13px; transition:background .15s; }
+.drop-zone.over { background:var(--purple-bg); }
+.ai-result-item { background:var(--purple-bg); border:1px solid #C5C1F0; border-radius:var(--radius-sm); padding:10px 12px; margin-top:8px; }
+.add-ai-btn { font-size:11px; padding:4px 12px; background:var(--purple); color:#fff; border:none; border-radius:4px; cursor:pointer; font-family:inherit; font-weight:700; margin-top:6px; }
+.add-ai-btn.added { background:var(--green); }
+.add-ai-btn:disabled { background:var(--hint); cursor:not-allowed; }
+
+/* 바로가기 */
+.sc-item { display:flex; align-items:center; gap:10px; padding:9px 12px; border:1px solid var(--border); border-radius:var(--radius-sm); text-decoration:none; background:var(--bg); margin-bottom:6px; transition:all .15s; }
+.sc-item:hover { border-color:#A8C8E8; background:var(--blue-bg); }
+.sc-icon { width:30px; height:30px; border-radius:7px; display:flex; align-items:center; justify-content:center; font-size:15px; flex-shrink:0; }
+.sc-del { margin-left:auto; font-size:11px; color:var(--hint); cursor:pointer; padding:2px 6px; border:1px solid var(--border); border-radius:4px; background:none; }
+.sc-del:hover { border-color:var(--red); color:var(--red); }
+
+/* 상담 */
+.ct-학업 { background:var(--blue-bg); color:var(--blue); }
+.ct-생활 { background:var(--green-bg); color:var(--green); }
+.ct-교우 { background:var(--purple-bg); color:var(--purple); }
+.ct-가정 { background:var(--amber-bg); color:var(--amber); }
+.ct-기타 { background:var(--bg); color:var(--muted); border:1px solid var(--border); }
+
+/* 모달 */
+.overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.4); z-index:200; align-items:center; justify-content:center; }
+.overlay.open { display:flex; }
+.modal { background:var(--surface); border-radius:var(--radius); padding:22px; width:440px; max-width:92vw; display:flex; flex-direction:column; gap:12px; max-height:90vh; overflow-y:auto; }
+.modal h2 { font-size:15px; font-weight:700; }
+.modal label { font-size:12px; color:var(--muted); display:block; margin-bottom:3px; }
+.modal input,.modal select,.modal textarea { width:100%; }
+.modal-btns { display:flex; gap:8px; justify-content:flex-end; margin-top:4px; }
+
+.color-opts { display:flex; gap:6px; flex-wrap:wrap; margin-top:4px; }
+.color-opt { width:26px; height:26px; border-radius:50%; cursor:pointer; border:2px solid transparent; }
+.color-opt.sel { border-color:var(--blue); }
+
+.spinner { width:15px; height:15px; border:2px solid rgba(255,255,255,.4); border-top-color:#fff; border-radius:50%; animation:spin .7s linear infinite; }
+@keyframes spin { to { transform:rotate(360deg); } }
+.empty   { text-align:center; color:var(--hint); font-size:13px; padding:18px 0; }
+.form-block { display:flex; flex-direction:column; gap:8px; padding:12px; background:var(--bg); border-radius:var(--radius-sm); border:1px solid var(--border); margin-bottom:12px; }
+
+@media(max-width:660px) { .grid2{grid-template-columns:1fr;} .tab-panel{padding:12px;} header{padding:0 12px;} }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🏫 담임교사 대시보드</h1>
+  <div class="header-right">
+    <span class="header-date" id="hdr-date"></span>
+    <button class="icon-btn-hdr" onclick="openSettings()">⚙️ 설정</button>
+  </div>
+</header>
+
+<nav class="tab-nav">
+  <button class="tab-btn active" onclick="go('home',this)">🏠 홈</button>
+  <button class="tab-btn" onclick="go('todo',this)">✅ 할 일</button>
+  <button class="tab-btn" onclick="go('att',this)">📋 출석</button>
+  <button class="tab-btn" onclick="go('notice',this)">📢 알림장</button>
+  <button class="tab-btn" onclick="go('contact',this)">📞 학부모 연락</button>
+  <button class="tab-btn" onclick="go('counsel',this)">💬 상담 일지</button>
+  <button class="tab-btn" onclick="go('students',this)">👥 학생 명단</button>
+  <button class="tab-btn" onclick="go('tt',this)">🗓️ 시간표</button>
+  <button class="tab-btn" onclick="go('sc',this)">🔗 바로가기</button>
+</nav>
+
+<!-- ══ 홈 ══════════════════════════════════════ -->
+<div class="tab-panel active" id="tab-home">
+  <div class="grid2">
+    <div class="card span2">
+      <div class="card-header"><span class="card-title">이번 주 시간표</span><span id="home-wk-lbl" style="font-size:11px;color:var(--muted);"></span></div>
+      <div style="overflow-x:auto;"><table class="tt-table" id="home-tt"></table></div>
+    </div>
+    <div class="card"><div class="card-header"><span class="card-title">오늘 수업</span></div><div id="home-cls"></div></div>
+    <div class="card"><div class="card-header"><span class="card-title">🎂 생일 알림</span></div><div id="home-bday"></div></div>
+    <div class="card"><div class="card-header"><span class="card-title">오늘 출석 현황</span></div><div id="home-att"></div></div>
+    <div class="card"><div class="card-header"><span class="card-title">오늘 알림장</span></div><div id="home-ntc"></div></div>
+    <div class="card span2">
+      <div class="card-header"><span class="card-title">할 일 (미완료)</span><div style="display:flex;gap:6px;" id="home-stats"></div></div>
+      <div id="home-todos"></div>
+    </div>
+    <div class="ai-panel span2">
+      <div class="card-header"><span class="card-title" style="color:var(--purple);">🤖 메시지 → 할 일 자동 추출</span><span class="ai-badge">✨ AI</span></div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:8px;">충북소통메신저 등에서 받은 메시지를 붙여넣으면 AI가 할 일을 자동으로 추출해요.</div>
+      <textarea id="ai-msg" placeholder="메시지를 붙여넣으세요..." rows="3" style="width:100%;resize:vertical;"></textarea>
+      <button class="ai-btn btn-purple" id="ai-msg-btn" onclick="runMsgAI()"><span id="ai-msg-lbl">✨ AI로 할 일 추출하기</span></button>
+      <div id="ai-msg-out"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ 할 일 ════════════════════════════════════ -->
+<div class="tab-panel" id="tab-todo">
+  <div class="card">
+    <div class="card-header">
+      <span class="card-title">할 일 목록</span>
+      <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
+        <div style="display:flex;gap:5px;" id="todo-chips"></div>
+        <div style="display:flex;gap:4px;">
+          <button class="btn btn-sm btn-ghost" onclick="setTF('all',this)" style="font-weight:700;">전체</button>
+          <button class="btn btn-sm btn-ghost" onclick="setTF('todo',this)">미완료</button>
+          <button class="btn btn-sm btn-ghost" onclick="setTF('done',this)">완료</button>
+        </div>
+      </div>
+    </div>
+    <div class="form-block">
+      <div class="row"><input type="text" class="flex1" id="t-text" placeholder="할 일 입력..." onkeydown="if(event.key==='Enter')addTodo()"></div>
+      <div class="row">
+        <input type="date" id="t-due">
+        <select id="t-pri"><option value="high">🔴 높음</option><option value="mid" selected>🟡 보통</option><option value="low">🟢 낮음</option></select>
+        <button class="btn btn-primary" onclick="addTodo()">추가</button>
+      </div>
+    </div>
+    <div id="todo-list"><div class="empty">할 일이 없어요 ✨</div></div>
+  </div>
+</div>
+
+<!-- ══ 출석 ════════════════════════════════════ -->
+<div class="tab-panel" id="tab-att">
+  <div class="card">
+    <div class="card-header"><span class="card-title">출석 현황</span><input type="date" id="att-date" onchange="renderAtt()"></div>
+    <div style="font-size:12px;color:var(--muted);margin-bottom:10px;">버튼을 눌러 출결 상태를 기록하세요. 다시 누르면 취소돼요.</div>
+    <div class="att-grid" id="att-grid"></div>
+  </div>
+</div>
+
+<!-- ══ 알림장 ═══════════════════════════════════ -->
+<div class="tab-panel" id="tab-notice">
+  <div class="card">
+    <div class="card-header"><span class="card-title">알림장 / 공지</span><input type="date" id="ntc-date" onchange="renderNotices()"></div>
+    <div class="form-block">
+      <div class="row">
+        <input type="text" class="flex1" id="ntc-text" placeholder="오늘 전달할 내용..." onkeydown="if(event.key==='Enter')addNotice()">
+        <button class="btn btn-primary" onclick="addNotice()">추가</button>
+      </div>
+    </div>
+    <div id="ntc-list"></div>
+  </div>
+</div>
+
+<!-- ══ 학부모 연락 ══════════════════════════════ -->
+<div class="tab-panel" id="tab-contact">
+  <div class="card">
+    <div class="card-header"><span class="card-title">학부모 연락 로그</span></div>
+    <div class="form-block">
+      <div class="row">
+        <input type="date" id="ct-date" class="flex1">
+        <input type="text" id="ct-stu" placeholder="학생 이름" style="width:90px;">
+        <input type="text" id="ct-par" placeholder="학부모" style="width:80px;">
+      </div>
+      <div class="row">
+        <select id="ct-how"><option>전화</option><option>문자</option><option>앱</option><option>대면</option></select>
+        <input type="text" class="flex1" id="ct-cnt" placeholder="연락 내용..." onkeydown="if(event.key==='Enter')addContact()">
+        <button class="btn btn-primary" onclick="addContact()">기록</button>
+      </div>
+    </div>
+    <div id="ct-list"></div>
+  </div>
+</div>
+
+<!-- ══ 상담 일지 ════════════════════════════════ -->
+<div class="tab-panel" id="tab-counsel">
+  <div class="card">
+    <div class="card-header"><span class="card-title">상담 일지</span></div>
+    <div class="form-block">
+      <div class="row">
+        <input type="date" id="cs-date" class="flex1">
+        <input type="text" id="cs-stu" placeholder="학생 이름" style="width:110px;">
+        <select id="cs-type"><option>학업</option><option>생활</option><option>교우</option><option>가정</option><option>기타</option></select>
+      </div>
+      <textarea id="cs-cnt" placeholder="상담 내용..." rows="3" style="width:100%;resize:vertical;"></textarea>
+      <div class="row">
+        <input type="text" class="flex1" id="cs-follow" placeholder="후속 조치 (선택)">
+        <button class="btn btn-primary" onclick="addCounsel()">저장</button>
+      </div>
+    </div>
+    <div id="cs-list"></div>
+  </div>
+</div>
+
+<!-- ══ 학생 명단 ════════════════════════════════ -->
+<div class="tab-panel" id="tab-students">
+  <div class="card">
+    <div class="card-header"><span class="card-title">학생 명단</span><button class="btn btn-primary btn-sm" onclick="openStuModal()">+ 추가</button></div>
+    <div id="stu-list"></div>
+  </div>
+</div>
+
+<!-- ══ 시간표 ═══════════════════════════════════ -->
+<div class="tab-panel" id="tab-tt">
+  <div class="grid2">
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">주간 시간표</span>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;">
+          <input type="date" id="tt-week" onchange="loadTTEdit()">
+          <button class="btn btn-primary btn-sm" onclick="saveTTWeek()">이번 주 저장</button>
+          <button class="btn btn-green btn-sm" onclick="saveTTDefault()">기본으로 저장</button>
+        </div>
+      </div>
+      <div style="font-size:11px;color:var(--muted);margin-bottom:8px;">📌 기본으로 저장: 스크린샷 없는 주에 자동 표시</div>
+      <div style="overflow-x:auto;"><table class="tt-table" id="tt-edit"></table></div>
+    </div>
+    <div class="ai-panel">
+      <div class="card-header"><span class="card-title" style="color:var(--purple);">📷 스크린샷 → AI 자동 인식</span><span class="ai-badge">✨ Vision</span></div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:10px;">시간표 스크린샷을 붙여넣거나 업로드하면 AI가 자동으로 읽어줘요.<br>붙여넣기(Ctrl+V)도 지원해요!</div>
+      <div class="drop-zone" id="tt-drop" onclick="document.getElementById('tt-file').click()" ondragover="event.preventDefault();this.classList.add('over')" ondragleave="this.classList.remove('over')" ondrop="onTTDrop(event)">
+        <div id="tt-drop-txt">📷 클릭 또는 드래그 / Ctrl+V</div>
+        <img id="tt-prev" style="display:none;max-width:100%;max-height:150px;margin:8px auto 0;border-radius:6px;">
+      </div>
+      <input type="file" id="tt-file" accept="image/*" style="display:none;" onchange="onTTFile(this.files[0])">
+      <button class="ai-btn btn-purple" id="tt-ai-btn" onclick="runTTAI()" style="display:none;"><span id="tt-ai-lbl">✨ AI로 시간표 인식하기</span></button>
+      <div id="tt-ai-msg" style="margin-top:8px;font-size:13px;"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ 바로가기 ═════════════════════════════════ -->
+<div class="tab-panel" id="tab-sc">
+  <div class="card" style="max-width:480px;">
+    <div class="card-header"><span class="card-title">빠른 바로가기</span><button class="btn btn-primary btn-sm" onclick="openScModal()">+ 추가</button></div>
+    <div id="sc-list"></div>
+  </div>
+</div>
+
+<!-- ══ 모달들 ════════════════════════════════════ -->
+<div class="overlay" id="set-modal">
+  <div class="modal">
+    <h2>⚙️ 설정</h2>
+    <div>
+      <label>Anthropic API 키 <span style="color:var(--purple);font-weight:700;">(AI 기능)</span></label>
+      <input type="password" id="s-key" placeholder="sk-ant-...">
+      <div style="font-size:11px;color:var(--hint);margin-top:3px;">브라우저 localStorage에만 저장 · GitHub 코드에 절대 포함되지 않아요</div>
+    </div>
+    <div class="modal-btns">
+      <button class="btn btn-ghost btn-sm" onclick="closeModal('set-modal')">취소</button>
+      <button class="btn btn-primary btn-sm" onclick="saveSettings()">저장</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="stu-modal">
+  <div class="modal">
+    <h2 id="stu-modal-ttl">학생 추가</h2>
+    <div><label>번호</label><input type="text" id="sm-num" placeholder="1"></div>
+    <div><label>이름 *</label><input type="text" id="sm-name" placeholder="홍길동"></div>
+    <div><label>생일</label><input type="date" id="sm-bday"></div>
+    <div><label>학부모 연락처</label><input type="tel" id="sm-phone" placeholder="010-0000-0000"></div>
+    <div><label>비고</label><input type="text" id="sm-note"></div>
+    <div class="modal-btns">
+      <button class="btn btn-ghost btn-sm" onclick="closeModal('stu-modal')">취소</button>
+      <button class="btn btn-primary btn-sm" onclick="saveStu()">저장</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="sc-modal">
+  <div class="modal">
+    <h2>바로가기 추가</h2>
+    <div><label>이름</label><input type="text" id="scm-label" placeholder="나이스"></div>
+    <div><label>URL</label><input type="url" id="scm-url" placeholder="https://neis.go.kr"></div>
+    <div><label>색상</label><div class="color-opts" id="sc-colors"></div></div>
+    <div class="modal-btns">
+      <button class="btn btn-ghost btn-sm" onclick="closeModal('sc-modal')">취소</button>
+      <button class="btn btn-primary btn-sm" onclick="saveSc()">저장</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════
+// 스토리지 헬퍼
+// ═══════════════════════════════════════════════
+const LS = {
+  get: (k, def=[]) => { try { return JSON.parse(localStorage.getItem(k)) ?? def; } catch { return def; } },
+  set: (k, v) => localStorage.setItem(k, JSON.stringify(v)),
+};
+
+// ═══════════════════════════════════════════════
+// 날짜/유틸
+// ═══════════════════════════════════════════════
+const now      = new Date();
+const WD       = ['일','월','화','수','목','금','토'];
+const DOW      = now.getDay();
+const TODAY    = now.toISOString().split('T')[0];
+const WEEK_MON = getMonday(now);
+const PERIODS  = ['1교시','2교시','3교시','4교시','5교시','6교시','7교시'];
+const DAYS     = ['mon','tue','wed','thu','fri'];
+
+function getMonday(d) {
+  const c = new Date(d), day = c.getDay();
+  c.setDate(c.getDate() - day + (day === 0 ? -6 : 1));
+  return c.toISOString().split('T')[0];
+}
+function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function uid()  { return Date.now() + Math.random().toString(36).slice(2,6); }
+
+document.getElementById('hdr-date').textContent =
+  now.getFullYear()+'년 '+(now.getMonth()+1)+'월 '+now.getDate()+'일 ('+WD[DOW]+')';
+
+// 기본 날짜 세팅
+['att-date','ntc-date','ct-date','cs-date'].forEach(id => { const el=document.getElementById(id); if(el) el.value=TODAY; });
+document.getElementById('t-due').value = TODAY;
+document.getElementById('tt-week').value = WEEK_MON;
+
+// ═══════════════════════════════════════════════
+// 탭
+// ═══════════════════════════════════════════════
+function go(name, btn) {
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ═══════════════════════════════════════════════
+// 설정 (API 키)
+// ═══════════════════════════════════════════════
+function openSettings() { document.getElementById('s-key').value = LS.get('api_key',''); openModal('set-modal'); }
+function saveSettings()  { LS.set('api_key', document.getElementById('s-key').value.trim()); closeModal('set-modal'); }
+function getAPIKey()     { return LS.get('api_key',''); }
+
+// ═══════════════════════════════════════════════
+// 모달
+// ═══════════════════════════════════════════════
+function openModal(id)  { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+// ═══════════════════════════════════════════════
+// 투두
+// ═══════════════════════════════════════════════
+let todoFilter = 'all';
+const PL = {high:'높음',mid:'보통',low:'낮음'};
+const PC = {high:'badge-high',mid:'badge-mid',low:'badge-low'};
+
+function getTodos()    { return LS.get('todos'); }
+function saveTodos(v)  { LS.set('todos', v); }
+
+function addTodo(text, due, priority) {
+  const t = text !== undefined ? text : document.getElementById('t-text').value.trim();
+  if (!t) return;
+  const d = due      !== undefined ? due      : document.getElementById('t-due').value;
+  const p = priority !== undefined ? priority : document.getElementById('t-pri').value;
+  if (text === undefined) document.getElementById('t-text').value = '';
+  const todos = getTodos();
+  todos.push({ id: uid(), text: t, due: d, priority: p, done: false, createdAt: new Date().toISOString() });
+  saveTodos(todos); renderTodos(); renderHomeTodos();
+}
+function toggleTodo(id) {
+  const todos = getTodos().map(t => t.id === id ? {...t, done: !t.done} : t);
+  saveTodos(todos); renderTodos(); renderHomeTodos();
+}
+function deleteTodo(id) {
+  if (!confirm('삭제?')) return;
+  saveTodos(getTodos().filter(t => t.id !== id)); renderTodos(); renderHomeTodos();
+}
+function setTF(f, btn) {
+  todoFilter = f;
+  document.querySelectorAll('#tab-todo .btn-ghost').forEach(b => b.style.fontWeight = '');
+  btn.style.fontWeight = '700';
+  renderTodos();
+}
+function renderTodos() {
+  const list  = document.getElementById('todo-list');
+  const chips = document.getElementById('todo-chips');
+  const todos = getTodos();
+  const done  = todos.filter(t=>t.done).length;
+  const ovd   = todos.filter(t=>!t.done&&t.due&&t.due<TODAY).length;
+  chips.innerHTML =
+    `<span class="chip chip-blue">${todos.length-done}개 남음</span>`+
+    (ovd?`<span class="chip chip-red">기한 초과 ${ovd}</span>`:'')+
+    (done?`<span class="chip chip-green">완료 ${done}</span>`:'');
+  let fl = todos.filter(t => todoFilter==='all'?true:todoFilter==='done'?t.done:!t.done)
+    .sort((a,b) => { if(a.done!==b.done) return a.done?1:-1; return ({high:0,mid:1,low:2}[a.priority]||1)-({high:0,mid:1,low:2}[b.priority]||1); });
+  if (!fl.length) { list.innerHTML='<div class="empty">할 일이 없어요 ✨</div>'; return; }
+  list.innerHTML = fl.map(t => {
+    const iso = !t.done&&t.due&&t.due<TODAY, isT = t.due===TODAY;
+    let due = ''; if(t.due){const d=new Date(t.due+'T00:00:00');due=(d.getMonth()+1)+'/'+d.getDate();if(isT)due='오늘 마감';if(iso)due='기한 초과 ('+due+')';}
+    return `<div class="list-item">
+      <input type="checkbox" class="chk" ${t.done?'checked':''} onchange="toggleTodo('${t.id}')">
+      <div class="list-body">
+        <div class="todo-text${t.done?' done':''}">${esc(t.text)}</div>
+        <div class="todo-meta"><span class="badge ${PC[t.priority]||'badge-mid'}">${PL[t.priority]||'보통'}</span>${due?`<span class="due-label${iso?' overdue':isT?' duetoday':''}">${due}</span>`:''}</div>
+      </div>
+      <div class="list-actions"><button class="iBtn del" onclick="deleteTodo('${t.id}')">삭제</button></div>
+    </div>`;
+  }).join('');
+}
+function renderHomeTodos() {
+  const el = document.getElementById('home-todos');
+  const st = document.getElementById('home-stats');
+  const todos = getTodos();
+  const done  = todos.filter(t=>t.done).length;
+  const ovd   = todos.filter(t=>!t.done&&t.due&&t.due<TODAY).length;
+  st.innerHTML =
+    `<span class="chip chip-blue">${todos.length-done}개 남음</span>`+
+    (ovd?`<span class="chip chip-red">기한 초과 ${ovd}</span>`:'')+
+    (done?`<span class="chip chip-green">완료 ${done}</span>`:'');
+  const fl = todos.filter(t=>!t.done).sort((a,b)=>({high:0,mid:1,low:2}[a.priority]||1)-({high:0,mid:1,low:2}[b.priority]||1)).slice(0,5);
+  if (!fl.length) { el.innerHTML='<div class="empty">미완료 할 일이 없어요 ✨</div>'; return; }
+  el.innerHTML = fl.map(t => {
+    const iso = t.due&&t.due<TODAY, isT = t.due===TODAY;
+    let due = ''; if(t.due){const d=new Date(t.due+'T00:00:00');due=(d.getMonth()+1)+'/'+d.getDate();if(isT)due='오늘 마감';if(iso)due='기한 초과 ('+due+')';}
+    return `<div class="list-item">
+      <input type="checkbox" class="chk" onchange="toggleTodo('${t.id}')">
+      <div class="list-body"><div class="todo-text">${esc(t.text)}</div><div class="todo-meta"><span class="badge ${PC[t.priority]||'badge-mid'}">${PL[t.priority]||'보통'}</span>${due?`<span class="due-label${iso?' overdue':isT?' duetoday':''}">${due}</span>`:''}</div></div>
+    </div>`;
+  }).join('');
+}
+
+// ═══════════════════════════════════════════════
+// 출석
+// ═══════════════════════════════════════════════
+function getAtt()   { return LS.get('attendance', {}); }
+function saveAtt(v) { LS.set('attendance', v); }
+
+function setAtt(date, name, status) {
+  const att = getAtt();
+  if (!att[date]) att[date] = {};
+  if (att[date][name]?.status === status) { delete att[date][name]; }
+  else { att[date][name] = { status, reason: att[date][name]?.reason || '' }; }
+  saveAtt(att); renderAtt(); renderHomeAtt();
+}
+function setAttReason(date, name, reason) {
+  const att = getAtt();
+  if (att[date]?.[name]) { att[date][name].reason = reason; saveAtt(att); }
+}
+function renderAtt() {
+  const date = document.getElementById('att-date').value;
+  const grid = document.getElementById('att-grid');
+  const stus = LS.get('students');
+  const att  = getAtt()[date] || {};
+  if (!stus.length) { grid.innerHTML='<div class="empty" style="grid-column:1/-1;">👥 학생 명단 탭에서 학생을 먼저 등록해주세요</div>'; return; }
+  grid.innerHTML = stus.map(s => {
+    const a = att[s.name] || {};
+    const st = a.status || '';
+    return `<div class="att-card">
+      <div class="att-name">${esc(s.name)}</div>
+      <div class="att-row">
+        ${['결석','지각','조퇴','병결'].map(v=>`<button class="aBtn${st===v?' a-'+v:''}" onclick="setAtt('${esc(date)}','${esc(s.name)}','${v}')">${v}</button>`).join('')}
+      </div>
+      ${st?`<div style="margin-top:6px;"><input type="text" class="att-reason" value="${esc(a.reason||'')}" placeholder="사유" style="width:100%;font-size:11px;padding:3px 6px;" onchange="setAttReason('${esc(date)}','${esc(s.name)}',this.value)"></div>`:''}
+    </div>`;
+  }).join('');
+}
+function renderHomeAtt() {
+  const el   = document.getElementById('home-att');
+  const date = document.getElementById('att-date').value;
+  const stus = LS.get('students');
+  const att  = getAtt()[date] || {};
+  const list = Object.entries(att);
+  const absent=list.filter(([,v])=>v.status==='결석').length;
+  const late  =list.filter(([,v])=>v.status==='지각').length;
+  const early =list.filter(([,v])=>v.status==='조퇴').length;
+  const sick  =list.filter(([,v])=>v.status==='병결').length;
+  const norm  = stus.length - absent - late - early - sick;
+  el.innerHTML=`
+    <div style="font-size:11px;color:var(--muted);margin-bottom:8px;">${date} · 전체 ${stus.length}명</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
+      <div style="background:var(--green-bg);border-radius:8px;padding:10px;text-align:center;"><div style="font-size:20px;font-weight:700;color:var(--green);">${norm}</div><div style="font-size:11px;color:var(--green);">정상</div></div>
+      <div style="background:var(--red-bg);border-radius:8px;padding:10px;text-align:center;"><div style="font-size:20px;font-weight:700;color:var(--red);">${absent}</div><div style="font-size:11px;color:var(--red);">결석</div></div>
+      <div style="background:var(--amber-bg);border-radius:8px;padding:10px;text-align:center;"><div style="font-size:20px;font-weight:700;color:var(--amber);">${late}</div><div style="font-size:11px;color:var(--amber);">지각</div></div>
+      <div style="background:var(--teal-bg);border-radius:8px;padding:10px;text-align:center;"><div style="font-size:20px;font-weight:700;color:var(--teal);">${sick}</div><div style="font-size:11px;color:var(--teal);">병결</div></div>
+    </div>
+    ${list.length?list.map(([name,v])=>`<div style="font-size:12px;padding:3px 0;border-bottom:1px solid var(--border);">${esc(name)} <span class="badge badge-${v.status==='결석'?'high':v.status==='지각'?'mid':'low'}">${esc(v.status)}</span>${v.reason?` <span style="color:var(--muted);">${esc(v.reason)}</span>`:''}</div>`).join(''):''}`;
+}
+
+// ═══════════════════════════════════════════════
+// 알림장
+// ═══════════════════════════════════════════════
+function getNotices()   { return LS.get('notices', {}); }
+function saveNotices(v) { LS.set('notices', v); }
+
+function addNotice() {
+  const date = document.getElementById('ntc-date').value;
+  const text = document.getElementById('ntc-text').value.trim(); if (!text) return;
+  document.getElementById('ntc-text').value = '';
+  const ntc = getNotices();
+  if (!ntc[date]) ntc[date] = [];
+  ntc[date].push({ id: uid(), text, done: false });
+  saveNotices(ntc); renderNotices(); renderHomeNtc();
+}
+function toggleNotice(date, id) {
+  const ntc = getNotices();
+  ntc[date] = (ntc[date]||[]).map(n => n.id===id?{...n,done:!n.done}:n);
+  saveNotices(ntc); renderNotices(); renderHomeNtc();
+}
+function deleteNotice(date, id) {
+  const ntc = getNotices();
+  ntc[date] = (ntc[date]||[]).filter(n => n.id !== id);
+  saveNotices(ntc); renderNotices(); renderHomeNtc();
+}
+function renderNotices() {
+  const date = document.getElementById('ntc-date').value;
+  const list = document.getElementById('ntc-list');
+  const items = (getNotices()[date]||[]);
+  if (!items.length) { list.innerHTML='<div class="empty">알림장이 없어요</div>'; return; }
+  list.innerHTML = items.map(n=>`<div class="list-item">
+    <input type="checkbox" class="chk" ${n.done?'checked':''} onchange="toggleNotice('${esc(date)}','${n.id}')">
+    <div class="list-body"><div style="font-size:13px;${n.done?'text-decoration:line-through;color:var(--hint);':''}">${esc(n.text)}</div></div>
+    <div class="list-actions"><button class="iBtn del" onclick="deleteNotice('${esc(date)}','${n.id}')">삭제</button></div>
+  </div>`).join('');
+}
+function renderHomeNtc() {
+  const el    = document.getElementById('home-ntc');
+  const items = (getNotices()[TODAY]||[]);
+  if (!items.length) { el.innerHTML='<div class="empty">오늘 알림장이 없어요</div>'; return; }
+  el.innerHTML = items.map(n=>`<div style="font-size:13px;padding:5px 0;border-bottom:1px solid var(--border);${n.done?'text-decoration:line-through;color:var(--hint);':''}">${esc(n.text)}</div>`).join('');
+}
+
+// ═══════════════════════════════════════════════
+// 학부모 연락
+// ═══════════════════════════════════════════════
+function getContacts()   { return LS.get('contacts'); }
+function saveContacts(v) { LS.set('contacts', v); }
+function addContact() {
+  const stu = document.getElementById('ct-stu').value.trim(); if (!stu) return;
+  const cnt = document.getElementById('ct-cnt').value.trim(); if (!cnt) return;
+  const item = {
+    id: uid(), date: document.getElementById('ct-date').value,
+    student: stu, parent: document.getElementById('ct-par').value.trim(),
+    method: document.getElementById('ct-how').value, content: cnt,
+    createdAt: new Date().toISOString()
+  };
+  document.getElementById('ct-cnt').value = '';
+  const arr = getContacts(); arr.unshift(item); saveContacts(arr); renderContacts();
+}
+function deleteContact(id) {
+  if (!confirm('삭제?')) return;
+  saveContacts(getContacts().filter(c=>c.id!==id)); renderContacts();
+}
+function renderContacts() {
+  const list = document.getElementById('ct-list');
+  const arr  = getContacts().slice(0,30);
+  if (!arr.length) { list.innerHTML='<div class="empty">연락 기록이 없어요</div>'; return; }
+  const MC = {'전화':'chip-blue','문자':'chip-green','앱':'chip-amber','대면':'chip-blue'};
+  list.innerHTML = arr.map(c=>`<div class="list-item">
+    <div class="list-body">
+      <div style="display:flex;gap:6px;align-items:center;margin-bottom:3px;">
+        <span style="font-size:13px;font-weight:700;">${esc(c.student)}</span>
+        ${c.parent?`<span style="font-size:11px;color:var(--muted);">(${esc(c.parent)})</span>`:''}
+        <span class="chip ${MC[c.method]||'chip-blue'}" style="font-size:10px;padding:1px 7px;">${esc(c.method)}</span>
+        <span style="font-size:11px;color:var(--hint);">${esc(c.date)}</span>
+      </div>
+      <div style="font-size:12px;color:var(--muted);">${esc(c.content)}</div>
+    </div>
+    <div class="list-actions"><button class="iBtn del" onclick="deleteContact('${c.id}')">삭제</button></div>
+  </div>`).join('');
+}
+
+// ═══════════════════════════════════════════════
+// 상담 일지
+// ═══════════════════════════════════════════════
+function getCounsels()   { return LS.get('counsels'); }
+function saveCounsels(v) { LS.set('counsels', v); }
+function addCounsel() {
+  const stu = document.getElementById('cs-stu').value.trim(); if (!stu) return;
+  const cnt = document.getElementById('cs-cnt').value.trim(); if (!cnt) return;
+  const item = {
+    id: uid(), date: document.getElementById('cs-date').value,
+    student: stu, type: document.getElementById('cs-type').value,
+    content: cnt, followUp: document.getElementById('cs-follow').value.trim(),
+    createdAt: new Date().toISOString()
+  };
+  document.getElementById('cs-cnt').value = '';
+  document.getElementById('cs-follow').value = '';
+  const arr = getCounsels(); arr.unshift(item); saveCounsels(arr); renderCounsels();
+}
+function deleteCounsel(id) {
+  if (!confirm('삭제?')) return;
+  saveCounsels(getCounsels().filter(c=>c.id!==id)); renderCounsels();
+}
+function renderCounsels() {
+  const list = document.getElementById('cs-list');
+  const arr  = getCounsels().slice(0,30);
+  if (!arr.length) { list.innerHTML='<div class="empty">상담 기록이 없어요</div>'; return; }
+  list.innerHTML = arr.map(c=>`<div class="list-item" style="align-items:flex-start;">
+    <div class="list-body">
+      <div style="display:flex;gap:6px;align-items:center;margin-bottom:4px;">
+        <span style="font-size:13px;font-weight:700;">${esc(c.student)}</span>
+        <span class="badge ct-${esc(c.type)}" style="font-size:10px;border-radius:4px;padding:2px 7px;">${esc(c.type)}</span>
+        <span style="font-size:11px;color:var(--hint);">${esc(c.date)}</span>
+      </div>
+      <div style="font-size:13px;white-space:pre-wrap;word-break:break-all;">${esc(c.content)}</div>
+      ${c.followUp?`<div style="font-size:11px;color:var(--blue);margin-top:4px;">→ ${esc(c.followUp)}</div>`:''}
+    </div>
+    <div class="list-actions"><button class="iBtn del" onclick="deleteCounsel('${c.id}')">삭제</button></div>
+  </div>`).join('');
+}
+
+// ═══════════════════════════════════════════════
+// 학생 명단
+// ═══════════════════════════════════════════════
+let stuEditNum = null;
+function getStudents()   { return LS.get('students'); }
+function saveStudents(v) { LS.set('students', v); }
+function openStuModal(num) {
+  stuEditNum = num || null;
+  document.getElementById('stu-modal-ttl').textContent = num ? '학생 수정' : '학생 추가';
+  if (num) {
+    const s = getStudents().find(x=>x.number===num)||{};
+    document.getElementById('sm-num').value   = s.number||'';
+    document.getElementById('sm-name').value  = s.name||'';
+    document.getElementById('sm-bday').value  = s.birthday||'';
+    document.getElementById('sm-phone').value = s.parentPhone||'';
+    document.getElementById('sm-note').value  = s.note||'';
+  } else {
+    ['sm-num','sm-name','sm-bday','sm-phone','sm-note'].forEach(id=>document.getElementById(id).value='');
+  }
+  openModal('stu-modal');
+}
+function saveStu() {
+  const name = document.getElementById('sm-name').value.trim(); if (!name) return;
+  const s = {
+    number: document.getElementById('sm-num').value.trim(),
+    name, birthday: document.getElementById('sm-bday').value,
+    parentPhone: document.getElementById('sm-phone').value.trim(),
+    note: document.getElementById('sm-note').value.trim()
+  };
+  let stus = getStudents();
+  if (stuEditNum) stus = stus.map(x => x.number===stuEditNum ? s : x);
+  else stus.push(s);
+  saveStudents(stus); closeModal('stu-modal'); renderStudents(); renderBdays();
+}
+function deleteStu(num) {
+  if (!confirm('삭제?')) return;
+  saveStudents(getStudents().filter(s=>s.number!==num)); renderStudents(); renderBdays();
+}
+function renderStudents() {
+  const list = document.getElementById('stu-list');
+  const stus = getStudents();
+  if (!stus.length) { list.innerHTML='<div class="empty">+ 추가 버튼으로 학생을 등록해주세요</div>'; return; }
+  list.innerHTML = `<table style="width:100%;border-collapse:collapse;font-size:13px;">
+    <thead><tr style="background:var(--bg);">${['번호','이름','생일','연락처',''].map(h=>`<th style="padding:8px 6px;text-align:left;border-bottom:1px solid var(--border);font-size:11px;color:var(--muted);">${h}</th>`).join('')}</tr></thead>
+    <tbody>${stus.map(s=>`<tr>
+      <td style="padding:8px 6px;border-bottom:1px solid var(--border);">${esc(s.number)}</td>
+      <td style="padding:8px 6px;border-bottom:1px solid var(--border);font-weight:700;">${esc(s.name)}</td>
+      <td style="padding:8px 6px;border-bottom:1px solid var(--border);color:var(--muted);">${esc(s.birthday)}</td>
+      <td style="padding:8px 6px;border-bottom:1px solid var(--border);color:var(--muted);">${esc(s.parentPhone)}</td>
+      <td style="padding:8px 6px;border-bottom:1px solid var(--border);"><div style="display:flex;gap:4px;justify-content:flex-end;">
+        <button class="iBtn" onclick="openStuModal('${esc(s.number)}')">수정</button>
+        <button class="iBtn del" onclick="deleteStu('${esc(s.number)}')">삭제</button>
+      </div></td>
+    </tr>`).join('')}</tbody></table>`;
+}
+function renderBdays() {
+  const el   = document.getElementById('home-bday');
+  const stus = getStudents().filter(s=>s.birthday);
+  if (!stus.length) { el.innerHTML='<div class="empty">학생 명단을 등록해주세요</div>'; return; }
+  const base = new Date(TODAY);
+  const upcoming = stus.map(s=>{
+    const md   = s.birthday.slice(5);
+    const next = new Date(base.getFullYear()+'-'+md);
+    if (next < base) next.setFullYear(next.getFullYear()+1);
+    const diff = Math.round((next-base)/(1000*60*60*24));
+    return {...s, diff};
+  }).filter(s=>s.diff<=7).sort((a,b)=>a.diff-b.diff);
+  if (!upcoming.length) { el.innerHTML='<div class="empty">이번 주 생일인 학생이 없어요</div>'; return; }
+  el.innerHTML = upcoming.map(s=>s.diff===0
+    ?`<div style="background:var(--amber-bg);border-radius:8px;padding:8px 12px;margin-bottom:6px;font-size:13px;font-weight:700;color:var(--amber);">🎂 오늘 생일! ${esc(s.name)}</div>`
+    :`<div style="display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid var(--border);">
+        <span style="font-size:18px;">🎂</span>
+        <div><div style="font-size:13px;font-weight:700;">${esc(s.name)}</div><div style="font-size:11px;color:var(--muted);">${esc(s.birthday)} · ${s.diff}일 후</div></div>
+      </div>`
+  ).join('');
+}
+
+// ═══════════════════════════════════════════════
+// 시간표
+// ═══════════════════════════════════════════════
+function getTT()   { return LS.get('timetable', {}); }
+function saveTT(v) { LS.set('timetable', v); }
+
+function getTTForWeek(ws) {
+  const tt = getTT();
+  if (tt[ws] && tt[ws].length) return tt[ws];          // 해당 주 있으면
+  if (tt['default'] && tt['default'].length) return tt['default']; // 없으면 기본
+  return [];
+}
+
+function loadTTEdit() {
+  const ws   = document.getElementById('tt-week').value || WEEK_MON;
+  const rows = getTTForWeek(ws);
+  const rowMap = {};
+  rows.forEach(r => rowMap[r.period] = r);
+  const todayCI = DOW>=1&&DOW<=5 ? DOW-1 : -1;
+  const heads = ['월','화','수','목','금'];
+  const thead = `<thead><tr><th style="width:52px;">교시</th>${heads.map((d,i)=>`<th${i===todayCI?' class="tc"':''}>${d}${i===todayCI?'<span class="tbadge">오늘</span>':''}</th>`).join('')}</tr></thead>`;
+  const tbody = '<tbody>'+PERIODS.map(p=>{
+    const r = rowMap[p]||{};
+    return `<tr><td class="pl">${p}</td>${DAYS.map((d,i)=>{
+      const v=r[d]||'', isT=i===todayCI;
+      return `<td><input type="text" value="${esc(v)}" id="tte-${p}-${d}" placeholder="공강" style="width:100%;text-align:center;font-size:12px;padding:4px 2px;border:1px solid var(--border);border-radius:4px;background:${v?'var(--blue-bg)':'transparent'};color:${v?'var(--blue)':'var(--hint)'}" oninput="this.style.background=this.value?'var(--blue-bg)':'transparent';this.style.color=this.value?'var(--blue)':'var(--hint)'"></td>`;
+    }).join('')}</tr>`;
+  }).join('')+'</tbody>';
+  document.getElementById('tt-edit').innerHTML = thead+tbody;
+}
+
+function getTTInputRows() {
+  return PERIODS.map(p => ({
+    period: p,
+    mon: document.getElementById(`tte-${p}-mon`)?.value.trim()||'',
+    tue: document.getElementById(`tte-${p}-tue`)?.value.trim()||'',
+    wed: document.getElementById(`tte-${p}-wed`)?.value.trim()||'',
+    thu: document.getElementById(`tte-${p}-thu`)?.value.trim()||'',
+    fri: document.getElementById(`tte-${p}-fri`)?.value.trim()||'',
+  }));
+}
+function saveTTWeek() {
+  const ws = document.getElementById('tt-week').value || WEEK_MON;
+  const tt = getTT(); tt[ws] = getTTInputRows(); saveTT(tt);
+  alert('저장됐어요!'); renderHomeTT();
+}
+function saveTTDefault() {
+  const tt = getTT(); tt['default'] = getTTInputRows(); saveTT(tt);
+  alert('기본 시간표로 저장됐어요! 스크린샷 없는 주에 자동 표시됩니다.'); renderHomeTT();
+}
+function renderHomeTT() {
+  const table = document.getElementById('home-tt');
+  const ws    = document.getElementById('tt-week')?.value || WEEK_MON;
+  document.getElementById('home-wk-lbl').textContent = ws + ' 주';
+  const rows  = getTTForWeek(ws);
+  const rowMap = {}; rows.forEach(r => rowMap[r.period] = r);
+  const todayCI = DOW>=1&&DOW<=5 ? DOW-1 : -1;
+  const heads = ['월','화','수','목','금'];
+  const thead = `<thead><tr><th style="width:52px;">교시</th>${heads.map((d,i)=>`<th${i===todayCI?' class="tc"':''}>${d}${i===todayCI?'<span class="tbadge">오늘</span>':''}</th>`).join('')}</tr></thead>`;
+  const tbody = '<tbody>'+PERIODS.map(p=>{
+    const r=rowMap[p]||{};
+    return `<tr><td class="pl">${p}</td>${DAYS.map((d,i)=>{
+      const v=r[d]||'', isT=i===todayCI;
+      return `<td class="${v?'rc':'fc'}${isT?' tc':''}">${v||'공강'}</td>`;
+    }).join('')}</tr>`;
+  }).join('')+'</tbody>';
+  table.innerHTML = thead+tbody;
+
+  // 오늘 수업
+  const clsEl = document.getElementById('home-cls');
+  if (todayCI >= 0) {
+    const cls = PERIODS.map(p=>({p,rm:(rowMap[p]||{})[DAYS[todayCI]]||''})).filter(c=>c.rm);
+    clsEl.innerHTML = cls.length
+      ? cls.map(c=>`<div style="display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--border);">
+          <span style="font-size:11px;color:var(--muted);min-width:36px;">${c.p}</span>
+          <span style="font-size:14px;font-weight:700;color:var(--blue);">${c.rm}호</span></div>`).join('')
+        + `<div style="font-size:11px;color:var(--muted);margin-top:8px;">총 ${cls.length}교시</div>`
+      : '<div class="empty">오늘은 수업이 없어요</div>';
+  } else clsEl.innerHTML = '<div class="empty">오늘은 주말이에요 🎉</div>';
+}
+
+// ── 시간표 AI 인식 ────────────────────────────
+let ttImgB64='', ttImgMime='';
+function onTTFile(file) {
+  if (!file) return;
+  ttImgMime = file.type;
+  const r = new FileReader();
+  r.onload = e => {
+    ttImgB64 = e.target.result.split(',')[1];
+    const img = document.getElementById('tt-prev');
+    img.src = e.target.result; img.style.display = 'block';
+    document.getElementById('tt-drop-txt').style.display = 'none';
+    document.getElementById('tt-ai-btn').style.display = 'flex';
+    document.getElementById('tt-ai-msg').textContent = '';
+  };
+  r.readAsDataURL(file);
+}
+function onTTDrop(e) {
+  e.preventDefault(); document.getElementById('tt-drop').classList.remove('over');
+  const f = e.dataTransfer.files[0];
+  if (f && f.type.startsWith('image/')) onTTFile(f);
+}
+document.addEventListener('paste', e => {
+  const items = [...(e.clipboardData?.items||[])];
+  const img = items.find(i=>i.type.startsWith('image/'));
+  if (img) onTTFile(img.getAsFile());
+});
+
+async function runTTAI() {
+  const key = getAPIKey();
+  if (!key) { alert('⚙️ 설정에서 API 키를 입력해주세요.'); return; }
+  if (!ttImgB64) { alert('이미지를 먼저 업로드해주세요.'); return; }
+  const ws  = document.getElementById('tt-week').value || WEEK_MON;
+  const btn = document.getElementById('tt-ai-btn');
+  const lbl = document.getElementById('tt-ai-lbl');
+  const msg = document.getElementById('tt-ai-msg');
+  btn.disabled = true; lbl.innerHTML = '<div class="spinner"></div> 인식 중...'; msg.textContent = '';
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type':'application/json', 'x-api-key':key, 'anthropic-version':'2023-06-01', 'anthropic-dangerous-direct-browser-access':'true' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514', max_tokens: 1500,
+        system: `이미지에서 시간표를 읽어 반드시 아래 JSON 형식으로만 응답하세요. 다른 말은 하지 마세요.
+{"rows":[{"period":"1교시","mon":"","tue":"","wed":"","thu":"","fri":""},...]}
+교시가 없거나 공강이면 빈 문자열. 강의실 번호나 과목명 그대로 입력.`,
+        messages: [{ role:'user', content:[
+          { type:'image', source:{ type:'base64', media_type:ttImgMime, data:ttImgB64 } },
+          { type:'text',  text:'이 시간표를 JSON으로 변환해주세요.' }
+        ]}]
+      })
+    });
+    const data   = await res.json();
+    if (data.error) throw new Error(data.error.message);
+    const raw    = data.content.map(c=>c.text||'').join('');
+    const parsed = JSON.parse(raw.replace(/```json|```/g,'').trim());
+    if (parsed.rows?.length) {
+      const tt = getTT();
+      tt[ws] = parsed.rows.map(r=>({ period:r.period, mon:r.mon||'', tue:r.tue||'', wed:r.wed||'', thu:r.thu||'', fri:r.fri||'' }));
+      saveTT(tt);
+      loadTTEdit(); renderHomeTT();
+      msg.innerHTML = '<span style="color:var(--green);font-weight:700;">✓ 시간표 인식 완료! 저장됐어요.</span>';
+    }
+  } catch(e) {
+    msg.innerHTML = `<span style="color:var(--red);">오류: ${esc(e.message)}</span>`;
+  } finally {
+    btn.disabled = false; lbl.textContent = '✨ AI로 시간표 인식하기';
+  }
+}
+
+// ═══════════════════════════════════════════════
+// AI 메시지 분석
+// ═══════════════════════════════════════════════
+async function runMsgAI() {
+  const key = getAPIKey();
+  if (!key) { alert('⚙️ 설정에서 API 키를 입력해주세요.'); return; }
+  const msg = document.getElementById('ai-msg').value.trim();
+  if (!msg) { alert('메시지를 입력해주세요.'); return; }
+  const btn = document.getElementById('ai-msg-btn');
+  const lbl = document.getElementById('ai-msg-lbl');
+  const out = document.getElementById('ai-msg-out');
+  btn.disabled = true; lbl.innerHTML = '<div class="spinner"></div> 분석 중...'; out.innerHTML = '';
+  try {
+    const today = now.getFullYear()+'년 '+(now.getMonth()+1)+'월 '+now.getDate()+'일';
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type':'application/json', 'x-api-key':key, 'anthropic-version':'2023-06-01', 'anthropic-dangerous-direct-browser-access':'true' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514', max_tokens: 1000,
+        system: `당신은 교사를 돕는 할 일 추출 AI입니다. 오늘 날짜는 ${today}입니다.
+메시지에서 해야 할 일을 추출해서 반드시 아래 JSON 형식으로만 응답하세요. 다른 말은 하지 마세요.
+{"tasks":[{"text":"할 일 내용(20자 이내)","due":"YYYY-MM-DD 또는 빈 문자열","priority":"high/mid/low","reason":"이유 한 줄"}]}
+마감 3일 이내=high, 일주일 이내=mid, 그 외=low.`,
+        messages: [{ role:'user', content: msg }]
+      })
+    });
+    const data   = await res.json();
+    if (data.error) throw new Error(data.error.message);
+    const raw    = data.content.map(c=>c.text||'').join('');
+    const parsed = JSON.parse(raw.replace(/```json|```/g,'').trim());
+    renderAIOut(parsed.tasks||[], out);
+  } catch(e) {
+    out.innerHTML = `<div style="color:var(--red);font-size:13px;padding:8px 0;">오류: ${esc(e.message)}</div>`;
+  } finally {
+    btn.disabled = false; lbl.textContent = '✨ AI로 할 일 추출하기';
+  }
+}
+function renderAIOut(tasks, el) {
+  if (!tasks.length) { el.innerHTML='<div class="empty" style="margin-top:8px;">추출된 할 일이 없어요</div>'; return; }
+  el.innerHTML = `<div style="font-size:12px;color:var(--purple);font-weight:700;margin:10px 0 6px;">📋 ${tasks.length}개 항목 추출됨</div>` +
+    tasks.map((t,i) => {
+      const dD = t.due?(()=>{const d=new Date(t.due+'T00:00:00');return(d.getMonth()+1)+'/'+(d.getDate());})():'마감 없음';
+      return `<div class="ai-result-item" id="air-${i}">
+        <div style="font-size:13px;font-weight:700;">${esc(t.text)}</div>
+        <div style="display:flex;gap:6px;margin-top:4px;flex-wrap:wrap;align-items:center;">
+          <span class="badge ${PC[t.priority]||'badge-mid'}">${PL[t.priority]||'보통'}</span>
+          <span style="font-size:11px;color:var(--muted);">📅 ${dD}</span>
+          <span style="font-size:11px;color:var(--muted);">${esc(t.reason||'')}</span>
+        </div>
+        <div style="display:flex;gap:6px;margin-top:8px;">
+          <button class="add-ai-btn" id="air-add-${i}" onclick="addFromAI(${i},'${esc(t.text).replace(/'/g,"\\'")}','${t.due||''}','${t.priority||'mid'}')">+ 할 일 추가</button>
+          <button style="font-size:11px;padding:4px 10px;background:none;border:1px solid var(--border);border-radius:4px;color:var(--muted);cursor:pointer;" onclick="skipAI(${i})">건너뜀</button>
+        </div>
+      </div>`;
+    }).join('');
+}
+function addFromAI(i, text, due, priority) {
+  const btn = document.getElementById('air-add-'+i);
+  btn.disabled = true; btn.textContent = '추가 중...';
+  addTodo(text, due, priority);
+  btn.textContent = '✓ 추가됨'; btn.classList.add('added');
+  document.getElementById('air-'+i).style.opacity = '0.5';
+}
+function skipAI(i) {
+  const item = document.getElementById('air-'+i);
+  item.style.opacity = '0.35'; item.querySelectorAll('button').forEach(b=>b.disabled=true);
+}
+
+// ═══════════════════════════════════════════════
+// 바로가기
+// ═══════════════════════════════════════════════
+let scSelColor = '#E6F1FB';
+const SC_COLORS = ['#E6F1FB','#EAF3DE','#FAEEDA','#EEEDFE','#FCEBEB','#F5F4F0'];
+
+const scColorEl = document.getElementById('sc-colors');
+SC_COLORS.forEach((c,i) => {
+  const d = document.createElement('div');
+  d.className = 'color-opt'+(i===0?' sel':''); d.style.background = c;
+  d.onclick = () => { scSelColor=c; document.querySelectorAll('#sc-colors .color-opt').forEach(x=>x.classList.remove('sel')); d.classList.add('sel'); };
+  scColorEl.appendChild(d);
+});
+
+function getSCs()   { return LS.get('shortcuts'); }
+function saveSCs(v) { LS.set('shortcuts', v); }
+function getIcon(url) {
+  if(url.includes('drive.google'))return'📁'; if(url.includes('classroom.google'))return'🖥️';
+  if(url.includes('docs.google'))return'📄'; if(url.includes('sheets.google'))return'📊';
+  if(url.includes('neis'))return'👤'; if(url.includes('youtube'))return'▶️';
+  if(url.includes('github'))return'🐱'; if(url.includes('notion'))return'📝'; return'🔗';
+}
+function openScModal() { document.getElementById('scm-label').value=''; document.getElementById('scm-url').value=''; openModal('sc-modal'); }
+function saveSc() {
+  const label=document.getElementById('scm-label').value.trim(); if(!label)return;
+  const url=document.getElementById('scm-url').value.trim(); if(!url)return;
+  const full = url.startsWith('http')?url:'https://'+url;
+  const arr  = getSCs();
+  arr.push({ id:uid(), label, url:full, color:scSelColor, icon:getIcon(full) });
+  saveSCs(arr); closeModal('sc-modal'); renderSCs();
+}
+function deleteSC(id) {
+  if (!confirm('삭제?')) return;
+  saveSCs(getSCs().filter(s=>s.id!==id)); renderSCs();
+}
+function renderSCs() {
+  const list = document.getElementById('sc-list');
+  const arr  = getSCs();
+  if (!arr.length) { list.innerHTML='<div class="empty">바로가기를 추가해 보세요</div>'; return; }
+  list.innerHTML = arr.map(s=>`<a class="sc-item" href="${esc(s.url)}" target="_blank" rel="noopener">
+    <div class="sc-icon" style="background:${s.color}">${s.icon||'🔗'}</div>
+    <div style="min-width:0;">
+      <div style="font-size:13px;font-weight:700;">${esc(s.label)}</div>
+      <div style="font-size:11px;color:var(--hint);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${esc(s.url)}</div>
+    </div>
+    <button class="sc-del" onclick="event.preventDefault();deleteSC('${s.id}')">삭제</button>
+  </a>`).join('');
+}
+
+// ═══════════════════════════════════════════════
+// 샘플 데이터 (첫 방문)
+// ═══════════════════════════════════════════════
+if (!localStorage.getItem('todos')) {
+  LS.set('todos', [
+    { id:uid(), text:'3학년 수행평가 채점', due: TODAY, priority:'high', done:false, createdAt:new Date().toISOString() },
+    { id:uid(), text:'학급 일지 정리',       due: TODAY, priority:'mid',  done:false, createdAt:new Date().toISOString() },
+    { id:uid(), text:'교무회의 자료 준비',   due: '',    priority:'mid',  done:false, createdAt:new Date().toISOString() },
+  ]);
+}
+if (!localStorage.getItem('shortcuts')) {
+  LS.set('shortcuts', [
+    { id:uid(), label:'구글 드라이브',    url:'https://drive.google.com',     color:'#E6F1FB', icon:'📁' },
+    { id:uid(), label:'구글 클래스룸',    url:'https://classroom.google.com', color:'#EAF3DE', icon:'🖥️' },
+    { id:uid(), label:'나이스 교원서비스',url:'https://neis.go.kr',           color:'#EEEDFE', icon:'👤' },
+  ]);
+}
+if (!localStorage.getItem('timetable')) {
+  LS.set('timetable', { default: [
+    {period:'1교시',mon:'107',tue:'',   wed:'',   thu:'',   fri:''   },
+    {period:'2교시',mon:'',  tue:'',   wed:'106',thu:'',   fri:'102'},
+    {period:'3교시',mon:'',  tue:'105',wed:'103',thu:'106',fri:'105'},
+    {period:'4교시',mon:'',  tue:'',   wed:'',   thu:'102',fri:''   },
+    {period:'5교시',mon:'104',tue:'107',wed:'101',thu:'',  fri:'103'},
+    {period:'6교시',mon:'',  tue:'101',wed:'',   thu:'',   fri:'103'},
+    {period:'7교시',mon:'',  tue:'103',wed:'104',thu:'',   fri:''   },
+  ]});
+}
+
+// ═══════════════════════════════════════════════
+// 초기 렌더
+// ═══════════════════════════════════════════════
+renderTodos();
+renderHomeTodos();
+renderHomeAtt();
+renderHomeNtc();
+renderBdays();
+renderSCs();
+renderStudents();
+renderContacts();
+renderCounsels();
+renderNotices();
+renderAtt();
+loadTTEdit();
+renderHomeTT();
+</script>
+</body>
+</html>
