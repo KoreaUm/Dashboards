@@ -1,3 +1,5 @@
+--- START OF FILE Paste April 06, 2026 - 12:07AM ---
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -33,6 +35,27 @@
   --radius:10px;
   --radius-sm:6px;
 }
+
+/* ── 라이트 모드 변수 ── */
+[data-theme="light"] {
+  --bg:#f8fafc;
+  --bg2:#ffffff;
+  --bg3:#f1f5f9;
+  --surface:#ffffff;
+  --surface2:#f1f5f9;
+  --border:#e2e8f0;
+  --border2:#cbd5e1;
+  --text:#1e293b;
+  --muted:#64748b;
+  --hint:#94a3b8;
+  --accent-bg:rgba(79,156,249,0.1);
+  --green-bg:rgba(52,199,138,0.1);
+  --amber-bg:rgba(245,166,35,0.1);
+  --red-bg:rgba(240,107,107,0.1);
+  --purple-bg:rgba(167,139,250,0.1);
+  --teal-bg:rgba(45,212,191,0.1);
+}
+
 body{font-family:'Pretendard','Apple SD Gothic Neo','Noto Sans KR',sans-serif;background:var(--bg);color:var(--text);font-size:13px;line-height:1.5;height:100vh;overflow:hidden;display:flex;}
 
 /* ── 사이드바 ── */
@@ -62,7 +85,7 @@ body{font-family:'Pretendard','Apple SD Gothic Neo','Noto Sans KR',sans-serif;ba
 .nav-item:hover{background:var(--surface);color:var(--text);}
 .nav-item.active{background:var(--accent-bg);color:var(--accent);font-weight:600;}
 .nav-icon{font-size:14px;width:18px;text-align:center;flex-shrink:0;}
-.sidebar-bottom{padding:10px;border-top:1px solid var(--border);}
+.sidebar-bottom{padding:10px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:4px;}
 .settings-btn{
   width:100%;display:flex;align-items:center;gap:8px;
   padding:7px 10px;border-radius:var(--radius-sm);
@@ -322,6 +345,9 @@ select option{background:var(--bg2);}
     <button class="nav-item" onclick="go('sc',this)"><span class="nav-icon">🔗</span>바로가기</button>
   </nav>
   <div class="sidebar-bottom">
+    <button class="settings-btn" id="theme-toggle" onclick="toggleTheme()">
+      <span class="nav-icon" id="theme-icon">☀️</span><span id="theme-text">라이트 모드</span>
+    </button>
     <button class="settings-btn" onclick="openSettings()"><span class="nav-icon">⚙️</span>설정</button>
   </div>
 </aside>
@@ -629,6 +655,31 @@ document.getElementById('side-date').textContent=now.getFullYear()+'년 '+(now.g
 document.getElementById('t-due').value=TODAY;
 document.getElementById('tt-week').value=WEEK_MON;
 try{document.getElementById('t-due2').value=TODAY;document.getElementById('t-due2').value=TODAY;}catch(e){}
+
+// ── 테마 전환 ──────────────────────────────────
+function toggleTheme() {
+  const current = document.documentElement.getAttribute('data-theme');
+  const target = current === 'light' ? 'dark' : 'light';
+  applyTheme(target);
+}
+
+function applyTheme(theme) {
+  document.documentElement.setAttribute('data-theme', theme);
+  localStorage.setItem('theme', theme);
+  const icon = document.getElementById('theme-icon');
+  const text = document.getElementById('theme-text');
+  if(theme === 'light') {
+    icon.textContent = '🌙';
+    text.textContent = '다크 모드';
+  } else {
+    icon.textContent = '☀️';
+    text.textContent = '라이트 모드';
+  }
+}
+
+// 초기 테마 로드
+const savedTheme = localStorage.getItem('theme') || 'dark';
+applyTheme(savedTheme);
 
 // 설정
 function getGasUrl(){return localStorage.getItem('gas_url')||DEFAULT_GAS_URL;}
