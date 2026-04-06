@@ -995,7 +995,7 @@ async function runTTAI() {
   btn.disabled = true; lbl.innerHTML = '<div class="spinner" style="display:inline-block;"></div> 인식 중...'; msg.textContent = '';
   try {
     // 이미지가 커서 GAS 경유 불가 → 브라우저에서 직접 Gemini API 호출
-    const geminiRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`, {
+    const geminiRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent?key=${key}`, {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({
@@ -1034,7 +1034,7 @@ async function runMsgAI() {
   let result = null;
   try {
     const today = new Date().toLocaleDateString('ko-KR', {year:'numeric',month:'long',day:'numeric'});
-    const geminiRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`, {
+    const geminiRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent?key=${key}`, {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({
