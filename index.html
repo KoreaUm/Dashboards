@@ -633,7 +633,12 @@ function go(name, btn) {
   document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
   document.getElementById('tab-' + name).classList.add('active');
   btn.classList.add('active');
-  if (name === 'att')      { document.getElementById('att-date2').value = document.getElementById('att-date').value; loadAtt2(); }
+  if (name === 'att') {
+    const attDate = document.getElementById('att-date2');
+    if (!attDate.value) attDate.value = TODAY;
+    document.getElementById('att-date').value = attDate.value;
+    loadAtt2();
+  }
   if (name === 'notice')   loadNotices();
   if (name === 'contact')  loadContacts();
   if (name === 'counsel')  loadCounseling();
@@ -767,7 +772,7 @@ function renderHomeAtt() {
   <div class="att-detail">${attData.length ? attData.map(a=>`<div class="att-row-item"><span style="font-size:11px;font-weight:700;">${esc(a.studentName)}</span><span class="badge ${a.status==='결석'?'bh':a.status==='지각'?'bm':'bl'}">${esc(a.status)}</span>${a.reason?`<span style="font-size:10px;color:var(--muted);">${esc(a.reason)}</span>`:''}</div>`).join('') : '<div style="font-size:11px;color:var(--hint);padding:4px 0;">특이사항 없음</div>'}</div>`;
 }
 function renderAtt() {
-  const date = document.getElementById('att-date2').value, grid = document.getElementById('att-grid');
+  const date = document.getElementById('att-date2').value || TODAY, grid = document.getElementById('att-grid');
   if (!stuList.length) { grid.innerHTML = '<div class="empty" style="grid-column:1/-1;">학생 명단을 먼저 등록해주세요</div>'; return; }
   const attMap = {}; attData.forEach(a => attMap[a.studentName] = {status:a.status, reason:a.reason});
   grid.innerHTML = stuList.map(s => {
