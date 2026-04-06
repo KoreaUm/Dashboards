@@ -491,7 +491,7 @@ select option{background:var(--bg2);}
   <div class="modal">
     <h2>⚙️ 설정</h2>
     <div><label>GAS 웹앱 URL</label><input type="url" id="s-gas" placeholder="https://script.google.com/macros/s/..."><div style="font-size:10px;color:var(--hint);margin-top:2px;">브라우저에만 저장됩니다.</div></div>
-    <div><label>DeepSeek API 키 <span style="color:var(--purple);">(AI 기능)</span></label><input type="password" id="s-key" placeholder="DeepSeek API 키 (sk-...)"><div style="font-size:10px;color:var(--hint);margin-top:2px;">브라우저에만 저장 · platform.deepseek.com에서 발급</div></div>
+    <div><label>OpenRouter API 키 <span style="color:var(--purple);">(AI 기능)</span></label><input type="password" id="s-key" placeholder="OpenRouter API 키 (sk-or-...)"><div style="font-size:10px;color:var(--hint);margin-top:2px;">브라우저에만 저장 · openrouter.ai에서 발급</div></div>
     <div class="modal-btns"><button class="btn btn-ghost btn-sm" onclick="closeModal('set-modal')">취소</button><button class="btn btn-primary btn-sm" onclick="saveSettings()">저장</button></div>
   </div>
 </div>
@@ -735,14 +735,20 @@ async function loadAtt2() {
   renderAtt(); renderHomeAtt();
 }
 async function setAtt(date, name, status) {
-  await apiPost({action:'saveAttendance', date, studentName:name, status, reason:''});
-  attData = await apiGet('getAttendance', {date}) || [];
+  // 화면 먼저 업데이트 (낙관적 업데이트)
+  const existing = attData.find(a => a.studentName === name);
+  if (existing) { existing.status = status; existing.reason = ''; }
+  else { attData.push({date, studentName:name, status, reason:'', time:''}); }
   renderAtt(); renderHomeAtt();
+  // 서버에 저장
+  await apiPost({action:'saveAttendance', date, studentName:name, status, reason:''});
 }
 async function clearAtt(date, name) {
-  await apiPost({action:'deleteAttendance', date, studentName:name});
-  attData = await apiGet('getAttendance', {date}) || [];
+  // 화면 먼저 업데이트
+  attData = attData.filter(a => a.studentName !== name);
   renderAtt(); renderHomeAtt();
+  // 서버에서 삭제
+  await apiPost({action:'deleteAttendance', date, studentName:name});
 }
 async function saveAttReason(date, name, status, reason) {
   await apiPost({action:'saveAttendance', date, studentName:name, status, reason});
@@ -995,12 +1001,17 @@ async function runTTAI() {
   btn.disabled = true; lbl.innerHTML = '<div class="spinner" style="display:inline-block;"></div> 인식 중...'; msg.textContent = '';
   try {
     // 이미지가 커서 GAS 경유 불가 → 브라우저에서 직접 Gemini API 호출
-    // DeepSeek Vision API 호출
-    const dsRes = await fetch('https://api.deepseek.com/chat/completions', {
+    // OpenRouter Qwen Vision API 호출 (CORS 허용)
+    const orRes = await fetch('https://openrouter.ai/api/v1/chat/completions', {
       method: 'POST',
-      headers: {'Content-Type': 'application/json', 'Authorization': `Bearer ${key}`},
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${key}`,
+        'HTTP-Referer': location.origin,
+        'X-Title': '담임교사 대시보드'
+      },
       body: JSON.stringify({
-        model: 'deepseek-chat',
+        model: 'qwen/qwen2.5-vl-72b-instruct:free',
         messages: [
           { role: 'system', content: '이미지에서 시간표를 읽어 반드시 아래 JSON 형식으로만 응답하세요. 다른 말은 하지 마세요.\n{"rows":[{"period":"1교시","mon":"","tue":"","wed":"","thu":"","fri":""},...]}\n교시가 없거나 공강이면 빈 문자열. 강의실 번호나 과목명 그대로 입력.' },
           { role: 'user', content: [
@@ -1011,8 +1022,8 @@ async function runTTAI() {
         max_tokens: 1500
       })
     });
-    const data = await dsRes.json();
-    if (data.error) throw new Error(data.error.message);
+    const data = await orRes.json();
+    if (data.error) throw new Error(data.error.message || JSON.stringify(data.error));
     const raw = (data.choices?.[0]?.message?.content || '').replace(/```json|```/g,'').trim();
     const parsed = JSON.parse(raw);
     if (parsed.rows?.length) {
@@ -1039,20 +1050,25 @@ async function runMsgAI() {
   let result = null;
   try {
     const today = new Date().toLocaleDateString('ko-KR', {year:'numeric',month:'long',day:'numeric'});
-    const dsRes = await fetch('https://api.deepseek.com/chat/completions', {
+    const orRes = await fetch('https://openrouter.ai/api/v1/chat/completions', {
       method: 'POST',
-      headers: {'Content-Type': 'application/json', 'Authorization': `Bearer ${key}`},
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${key}`,
+        'HTTP-Referer': location.origin,
+        'X-Title': '담임교사 대시보드'
+      },
       body: JSON.stringify({
-        model: 'deepseek-chat',
+        model: 'qwen/qwen3-235b-a22b:free',
         messages: [
-          { role: 'system', content: `당신은 교사를 돕는 할 일 추출 AI입니다. 오늘 날짜는 ${today}입니다.\n메시지에서 해야 할 일을 추출해서 반드시 아래 JSON 형식으로만 응답하세요. 다른 말은 하지 마세요.\n{"tasks":[{"text":"할 일 내용(20자 이내)","due":"YYYY-MM-DD 또는 빈 문자열","priority":"high/mid/low","reason":"이유 한 줄"}]}\n마감 3일 이내=high, 일주일 이내=mid, 그 외=low.` },
+          { role: 'system', content: `당신은 교사를 돕는 할 일 추출 AI입니다. 오늘 날짜는 ${today}입니다. 메시지에서 해야 할 일을 추출해서 반드시 아래 JSON 형식으로만 응답하세요. 다른 말은 하지 마세요. {"tasks":[{"text":"할 일 내용(20자 이내)","due":"YYYY-MM-DD 또는 빈 문자열","priority":"high/mid/low","reason":"이유 한 줄"}]} 마감 3일 이내=high, 일주일 이내=mid, 그 외=low.` },
           { role: 'user', content: msg }
         ],
         max_tokens: 1000
       })
     });
-    const data = await dsRes.json();
-    if (data.error) throw new Error(data.error.message);
+    const data = await orRes.json();
+    if (data.error) throw new Error(data.error.message || JSON.stringify(data.error));
     const raw = (data.choices?.[0]?.message?.content || '').replace(/```json|```/g,'').trim();
     result = JSON.parse(raw);
   } catch(e) {
