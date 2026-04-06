@@ -677,12 +677,12 @@ function applyTheme(theme) {
   }
 }
 // 초기 테마: 기본값 라이트
+// 초기 테마: 항상 라이트로 시작, 이전 설정 적용
 (function(){
+  // 저장된 테마 불러오기 (없으면 라이트)
   const saved = localStorage.getItem('theme') || 'light';
   applyTheme(saved);
 })();
-
-loadAll();}
 
 // API
 async function apiGet(action,params={}){
