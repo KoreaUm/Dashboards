@@ -993,9 +993,34 @@ async function runTTAI() {
   const ws = document.getElementById('tt-week').value || WEEK_MON;
   const btn = document.getElementById('tt-ai-btn'), lbl = document.getElementById('tt-ai-lbl'), msg = document.getElementById('tt-ai-msg');
   btn.disabled = true; lbl.innerHTML = '<div class="spinner" style="display:inline-block;"></div> 인식 중...'; msg.textContent = '';
-  const res = await apiPost({action:'analyzeTimetable', apiKey:key, imageData:ttImgB64, mimeType:ttImgMime, weekStart:ws});
-  if (res) { msg.innerHTML = '<span style="color:var(--green);font-weight:700;">✓ 인식 완료! 저장됐어요.</span>'; loadTTEdit(); }
-  else { msg.innerHTML = '<span style="color:var(--red);">오류가 발생했어요.</span>'; }
+  try {
+    // 이미지가 커서 GAS 경유 불가 → 브라우저에서 직접 Gemini API 호출
+    const geminiRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${key}`, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        systemInstruction: { parts: [{ text: '이미지에서 시간표를 읽어 반드시 아래 JSON 형식으로만 응답하세요. 다른 말은 하지 마세요.\n{"rows":[{"period":"1교시","mon":"","tue":"","wed":"","thu":"","fri":""},...]}\n교시가 없거나 공강이면 빈 문자열. 강의실 번호나 과목명 그대로 입력.' }] },
+        contents: [{ role: 'user', parts: [
+          { inlineData: { mimeType: ttImgMime, data: ttImgB64 } },
+          { text: '이 시간표를 JSON으로 변환해주세요.' }
+        ]}]
+      })
+    });
+    const data = await geminiRes.json();
+    if (data.error) throw new Error(data.error.message);
+    const raw = (data.candidates?.[0]?.content?.parts?.[0]?.text || '').replace(/```json|```/g,'').trim();
+    const parsed = JSON.parse(raw);
+    if (parsed.rows?.length) {
+      await apiPost({action:'saveTimetable', weekStart:ws, rows:parsed.rows});
+      msg.innerHTML = '<span style="color:var(--green);font-weight:700;">✓ 인식 완료! 저장됐어요.</span>';
+      loadTTEdit();
+    } else {
+      msg.innerHTML = '<span style="color:var(--red);">시간표를 인식하지 못했어요.</span>';
+    }
+  } catch(e) {
+    console.error('TT AI 오류:', e);
+    msg.innerHTML = '<span style="color:var(--red);">오류: ' + esc(e.message) + '</span>';
+  }
   btn.disabled = false; lbl.textContent = '✨ AI로 시간표 인식';
 }
 
@@ -1005,7 +1030,27 @@ async function runMsgAI() {
   const msg = document.getElementById('ai-msg').value.trim(); if (!msg) { alert('메시지를 입력해주세요.'); return; }
   const btn = document.getElementById('ai-msg-btn'), lbl = document.getElementById('ai-msg-lbl'), out = document.getElementById('ai-msg-out');
   btn.disabled = true; lbl.innerHTML = '<div class="spinner" style="display:inline-block;"></div> 분석 중...'; out.innerHTML = '';
-  const result = await apiPost({action:'analyzeMessage', apiKey:key, message:msg});
+  // 브라우저에서 직접 Gemini API 호출
+  let result = null;
+  try {
+    const today = new Date().toLocaleDateString('ko-KR', {year:'numeric',month:'long',day:'numeric'});
+    const geminiRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${key}`, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        systemInstruction: { parts: [{ text: `당신은 교사를 돕는 할 일 추출 AI입니다. 오늘 날짜는 ${today}입니다.\n메시지에서 해야 할 일을 추출해서 반드시 아래 JSON 형식으로만 응답하세요. 다른 말은 하지 마세요.\n{"tasks":[{"text":"할 일 내용(20자 이내)","due":"YYYY-MM-DD 또는 빈 문자열","priority":"high/mid/low","reason":"이유 한 줄"}]}\n마감 3일 이내=high, 일주일 이내=mid, 그 외=low.` }] },
+        contents: [{ role: 'user', parts: [{ text: msg }] }]
+      })
+    });
+    const data = await geminiRes.json();
+    if (data.error) throw new Error(data.error.message);
+    const raw = (data.candidates?.[0]?.content?.parts?.[0]?.text || '').replace(/```json|```/g,'').trim();
+    result = JSON.parse(raw);
+  } catch(e) {
+    out.innerHTML = '<div style="color:var(--red);font-size:11px;margin-top:6px;">오류: ' + esc(e.message) + '</div>';
+    btn.disabled = false; lbl.textContent = '✨ AI로 할 일 추출';
+    return;
+  }
   if (result?.tasks) {
     if (!result.tasks.length) { out.innerHTML = '<div class="empty">추출된 할 일이 없어요</div>'; }
     else {
