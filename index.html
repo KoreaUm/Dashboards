@@ -207,6 +207,9 @@ select option{background:var(--bg2);}
 .aBtn.a-지각{background:var(--amber-bg);color:var(--amber);border-color:var(--amber);font-weight:700;}
 .aBtn.a-조퇴{background:var(--purple-bg);color:var(--purple);border-color:var(--purple);font-weight:700;}
 .aBtn.a-병결{background:var(--teal-bg);color:var(--teal);border-color:var(--teal);font-weight:700;}
+.aBtn.a-출석인정{background:var(--green-bg);color:var(--green);border-color:var(--green);font-weight:700;}
+.att-detail-row{display:flex;flex-direction:column;gap:3px;margin-top:5px;}
+.att-select{font-size:10px;padding:2px 5px;border:1px solid var(--border);border-radius:3px;background:var(--bg2);color:var(--text);font-family:inherit;width:100%;}
 
 /* 시간표 편집 */
 .tt-edit-table{width:100%;border-collapse:collapse;font-size:11px;table-layout:fixed;}
@@ -725,61 +728,146 @@ function renderTodos() {
 
 // ── 출석 ──────────────────────────────────────
 let attData = [], stuList = [];
+const ATT_STATUSES = ['결석','지각','조퇴','병결','출석인정'];
+const PERIODS_ATT = ['1교시','2교시','3교시','4교시','5교시','6교시','7교시'];
+
+// 학생 명단 초기 로드 (앱 시작 시 미리 캐시)
+async function preloadStudents() {
+  if (!stuList.length) stuList = await apiGet('getStudents') || [];
+}
 
 async function loadAtt() {
   const date = document.getElementById('att-date').value;
-  if (!stuList.length) stuList = await apiGet('getStudents') || [];
   attData = await apiGet('getAttendance', {date}) || [];
   renderHomeAtt();
 }
 async function loadAtt2() {
-  const date = document.getElementById('att-date2').value;
+  const date = document.getElementById('att-date2').value || TODAY;
   document.getElementById('att-date').value = date;
-  if (!stuList.length) stuList = await apiGet('getStudents') || [];
+  document.getElementById('att-date2').value = date;
   attData = await apiGet('getAttendance', {date}) || [];
   renderAtt(); renderHomeAtt();
 }
+
+// 출결 상태 버튼 클릭 시 상세 정보 패널 열기
+function openAttDetail(date, name, currentStatus) {
+  const a = attData.find(x => x.studentName === name) || {};
+  const reason = a.reason || '';
+
+  // 상세 정보 파싱 (예: "3교시부터" 또는 "1교시 등교")
+  let detail = '';
+  const periodMatch = reason.match(/(\d교시)/);
+  if (periodMatch) detail = periodMatch[1];
+
+  const panel = document.getElementById(`att-panel-${CSS.escape(name)}`);
+  if (!panel) return;
+  panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+}
+
 async function setAtt(date, name, status) {
-  // 화면 먼저 업데이트 (낙관적 업데이트)
   const existing = attData.find(a => a.studentName === name);
+  // 같은 상태 누르면 취소
+  if (existing && existing.status === status) {
+    attData = attData.filter(a => a.studentName !== name);
+    renderAtt(); renderHomeAtt();
+    await apiPost({action:'deleteAttendance', date, studentName:name});
+    return;
+  }
   if (existing) { existing.status = status; existing.reason = ''; }
   else { attData.push({date, studentName:name, status, reason:'', time:''}); }
   renderAtt(); renderHomeAtt();
-  // 서버에 저장
   await apiPost({action:'saveAttendance', date, studentName:name, status, reason:''});
 }
+
 async function clearAtt(date, name) {
-  // 화면 먼저 업데이트
   attData = attData.filter(a => a.studentName !== name);
   renderAtt(); renderHomeAtt();
-  // 서버에서 삭제
   await apiPost({action:'deleteAttendance', date, studentName:name});
 }
-async function saveAttReason(date, name, status, reason) {
+
+async function saveAttDetail(date, name, status, detailType, detailValue, extraReason) {
+  let reason = '';
+  if (status === '지각' && detailValue) reason = detailValue + '교시 등교';
+  if (status === '조퇴' && detailValue) reason = detailValue + '교시부터';
+  if (extraReason) reason += (reason ? ' / ' : '') + extraReason;
+
+  const existing = attData.find(a => a.studentName === name);
+  if (existing) existing.reason = reason;
+  renderHomeAtt();
   await apiPost({action:'saveAttendance', date, studentName:name, status, reason});
 }
+
 function renderHomeAtt() {
   const el = document.getElementById('home-att'), date = document.getElementById('att-date').value;
-  const absent=attData.filter(a=>a.status==='결석').length, late=attData.filter(a=>a.status==='지각').length;
-  const early=attData.filter(a=>a.status==='조퇴').length, sick=attData.filter(a=>a.status==='병결').length;
-  const norm = stuList.length - absent - late - early - sick;
+  const absent = attData.filter(a=>a.status==='결석').length;
+  const late   = attData.filter(a=>a.status==='지각').length;
+  const early  = attData.filter(a=>a.status==='조퇴').length;
+  const sick   = attData.filter(a=>a.status==='병결').length;
+  const approved = attData.filter(a=>a.status==='출석인정').length;
+  const norm = stuList.length - absent - late - early - sick - approved;
   el.innerHTML = `<div class="att-summary-grid">
     <div class="att-box" style="background:var(--green-bg);"><div class="att-num" style="color:var(--green);">${norm}</div><div class="att-lbl" style="color:var(--green);">정상</div></div>
     <div class="att-box" style="background:var(--red-bg);"><div class="att-num" style="color:var(--red);">${absent}</div><div class="att-lbl" style="color:var(--red);">결석</div></div>
     <div class="att-box" style="background:var(--amber-bg);"><div class="att-num" style="color:var(--amber);">${late}</div><div class="att-lbl" style="color:var(--amber);">지각</div></div>
     <div class="att-box" style="background:var(--teal-bg);"><div class="att-num" style="color:var(--teal);">${sick}</div><div class="att-lbl" style="color:var(--teal);">병결</div></div>
   </div>
-  <div class="att-detail">${attData.length ? attData.map(a=>`<div class="att-row-item"><span style="font-size:11px;font-weight:700;">${esc(a.studentName)}</span><span class="badge ${a.status==='결석'?'bh':a.status==='지각'?'bm':'bl'}">${esc(a.status)}</span>${a.reason?`<span style="font-size:10px;color:var(--muted);">${esc(a.reason)}</span>`:''}</div>`).join('') : '<div style="font-size:11px;color:var(--hint);padding:4px 0;">특이사항 없음</div>'}</div>`;
+  ${approved ? `<div style="font-size:11px;background:var(--green-bg);color:var(--green);border-radius:5px;padding:4px 8px;margin-bottom:6px;">출석인정 ${approved}명</div>` : ''}
+  <div class="att-detail">${attData.length ? attData.map(a=>`<div class="att-row-item">
+    <span style="font-size:11px;font-weight:700;">${esc(a.studentName)}</span>
+    <span class="badge ${a.status==='결석'?'bh':a.status==='지각'?'bm':a.status==='출석인정'?'bl':'bl'}">${esc(a.status)}</span>
+    ${a.reason?`<span style="font-size:10px;color:var(--muted);">${esc(a.reason)}</span>`:''}
+  </div>`).join('') : '<div style="font-size:11px;color:var(--hint);padding:4px 0;">특이사항 없음</div>'}</div>`;
 }
+
 function renderAtt() {
-  const date = document.getElementById('att-date2').value || TODAY, grid = document.getElementById('att-grid');
+  const date = document.getElementById('att-date2').value || TODAY;
+  const grid = document.getElementById('att-grid');
   if (!stuList.length) { grid.innerHTML = '<div class="empty" style="grid-column:1/-1;">학생 명단을 먼저 등록해주세요</div>'; return; }
-  const attMap = {}; attData.forEach(a => attMap[a.studentName] = {status:a.status, reason:a.reason});
+  const attMap = {}; attData.forEach(a => attMap[a.studentName] = a);
+
   grid.innerHTML = stuList.map(s => {
-    const a = attMap[s.name] || {}, st = a.status || '';
-    return `<div class="att-card"><div class="att-name">${esc(s.name)}</div>
-      <div class="att-row">${['결석','지각','조퇴','병결'].map(v=>`<button class="aBtn${st===v?' a-'+v:''}" onclick="setAtt('${esc(date)}','${esc(s.name)}','${v}')">${v}</button>`).join('')}${st?`<button class="aBtn" onclick="clearAtt('${esc(date)}','${esc(s.name)}')">취소</button>`:''}</div>
-      ${st?`<input type="text" value="${esc(a.reason||'')}" placeholder="사유" style="width:100%;font-size:10px;padding:2px 5px;margin-top:5px;" onchange="saveAttReason('${esc(date)}','${esc(s.name)}','${st}',this.value)">`:''}</div>`;
+    const a = attMap[s.name] || {}, st = a.status || '', reason = a.reason || '';
+
+    // 상세 정보 UI
+    let detailHTML = '';
+    if (st === '지각') {
+      const periodVal = reason.match(/(\d)교시/)?.[1] || '';
+      const extra = reason.replace(/\d교시 등교\s*\/?/, '').replace(/^\s*\/\s*/, '').trim();
+      detailHTML = `<div class="att-detail-row">
+        <div style="display:flex;align-items:center;gap:4px;flex-wrap:wrap;">
+          <span style="font-size:10px;color:var(--muted);">등교교시:</span>
+          <select class="att-select" style="width:80px;" onchange="saveAttDetail('${esc(date)}','${esc(s.name)}','지각','period',this.value,document.getElementById('att-extra-${esc(s.name)}').value)">
+            <option value="">선택</option>
+            ${[1,2,3,4,5,6,7].map(p=>`<option value="${p}" ${periodVal==p?'selected':''}>${p}교시</option>`).join('')}
+          </select>
+          <input type="text" id="att-extra-${esc(s.name)}" value="${esc(extra)}" placeholder="기타사유" style="font-size:10px;padding:2px 5px;border:1px solid var(--border);border-radius:3px;background:var(--bg2);color:var(--text);width:80px;" onchange="saveAttDetail('${esc(date)}','${esc(s.name)}','지각','period',document.querySelector('#att-grid [onchange*=\'지각\'][onchange*=\'${esc(s.name)}\'] option:checked')?.value||'',this.value)">
+        </div>
+      </div>`;
+    } else if (st === '조퇴') {
+      const periodVal = reason.match(/(\d)교시/)?.[1] || '';
+      const extra = reason.replace(/\d교시부터\s*\/?/, '').replace(/^\s*\/\s*/, '').trim();
+      detailHTML = `<div class="att-detail-row">
+        <div style="display:flex;align-items:center;gap:4px;flex-wrap:wrap;">
+          <span style="font-size:10px;color:var(--muted);">조퇴교시:</span>
+          <select class="att-select" style="width:80px;" onchange="saveAttDetail('${esc(date)}','${esc(s.name)}','조퇴','period',this.value,document.getElementById('att-extra-${esc(s.name)}').value)">
+            <option value="">선택</option>
+            ${[1,2,3,4,5,6,7].map(p=>`<option value="${p}" ${periodVal==p?'selected':''}>${p}교시</option>`).join('')}
+          </select>
+          <input type="text" id="att-extra-${esc(s.name)}" value="${esc(extra)}" placeholder="기타사유" style="font-size:10px;padding:2px 5px;border:1px solid var(--border);border-radius:3px;background:var(--bg2);color:var(--text);width:80px;" onchange="saveAttDetail('${esc(date)}','${esc(s.name)}','조퇴','period',document.querySelector('#att-grid select[onchange*=\'조퇴\'][onchange*=\'${esc(s.name)}\'] option:checked')?.value||'',this.value)">
+        </div>
+      </div>`;
+    } else if (st) {
+      detailHTML = `<input type="text" value="${esc(reason)}" placeholder="사유" style="width:100%;font-size:10px;padding:2px 5px;margin-top:4px;border:1px solid var(--border);border-radius:3px;background:var(--bg2);color:var(--text);" onchange="saveAttDetail('${esc(date)}','${esc(s.name)}','${st}','reason','',this.value)">`;
+    }
+
+    return `<div class="att-card">
+      <div class="att-name">${esc(s.name)}</div>
+      <div class="att-row">
+        ${ATT_STATUSES.map(v=>`<button class="aBtn${st===v?' a-'+v:''}" onclick="setAtt('${esc(date)}','${esc(s.name)}','${v}')">${v==='출석인정'?'인정':v}</button>`).join('')}
+        ${st?`<button class="aBtn" onclick="clearAtt('${esc(date)}','${esc(s.name)}')">✕</button>`:''}
+      </div>
+      ${detailHTML}
+    </div>`;
   }).join('');
 }
 
@@ -1220,6 +1308,7 @@ async function loadAll() {
   if (!getGasUrl()) { setTimeout(() => { if (!getGasUrl()) openSettings(); }, 500); return; }
   loadTodos();
   loadTTEdit();
+  // 학생 명단 미리 캐시 (출석 탭 빠르게)
   stuList = await apiGet('getStudents') || [];
   renderStudents(); renderBdays();
   attData = await apiGet('getAttendance', {date: TODAY}) || [];
