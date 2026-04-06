@@ -34,7 +34,7 @@
   --radius-sm:6px;
 }
 
-/* ── 라이트 모드 변수 ── */
+/* ── 라이트 모드 ── */
 [data-theme="light"] {
   --bg:#f8fafc;
   --bg2:#ffffff;
@@ -53,7 +53,6 @@
   --purple-bg:rgba(167,139,250,0.1);
   --teal-bg:rgba(45,212,191,0.1);
 }
-
 body{font-family:'Pretendard','Apple SD Gothic Neo','Noto Sans KR',sans-serif;background:var(--bg);color:var(--text);font-size:13px;line-height:1.5;height:100vh;overflow:hidden;display:flex;}
 
 /* ── 사이드바 ── */
@@ -83,7 +82,7 @@ body{font-family:'Pretendard','Apple SD Gothic Neo','Noto Sans KR',sans-serif;ba
 .nav-item:hover{background:var(--surface);color:var(--text);}
 .nav-item.active{background:var(--accent-bg);color:var(--accent);font-weight:600;}
 .nav-icon{font-size:14px;width:18px;text-align:center;flex-shrink:0;}
-.sidebar-bottom{padding:10px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:4px;}
+.sidebar-bottom{padding:10px;border-top:1px solid var(--border);}
 .settings-btn{
   width:100%;display:flex;align-items:center;gap:8px;
   padding:7px 10px;border-radius:var(--radius-sm);
@@ -342,9 +341,9 @@ select option{background:var(--bg2);}
     <button class="nav-item" onclick="go('tt',this)"><span class="nav-icon">🗓️</span>시간표</button>
     <button class="nav-item" onclick="go('sc',this)"><span class="nav-icon">🔗</span>바로가기</button>
   </nav>
-  <div class="sidebar-bottom">
+  <div class="sidebar-bottom" style="display:flex;flex-direction:column;gap:4px;">
     <button class="settings-btn" id="theme-toggle" onclick="toggleTheme()">
-      <span class="nav-icon" id="theme-icon">☀️</span><span id="theme-text">라이트 모드</span>
+      <span class="nav-icon" id="theme-icon">🌙</span><span id="theme-text">다크 모드</span>
     </button>
     <button class="settings-btn" onclick="openSettings()"><span class="nav-icon">⚙️</span>설정</button>
   </div>
@@ -593,7 +592,7 @@ select option{background:var(--bg2);}
   <div class="modal">
     <h2>⚙️ 설정</h2>
     <div><label>GAS 웹앱 URL</label><input type="url" id="s-gas" placeholder="https://script.google.com/macros/s/..."><div style="font-size:10px;color:var(--hint);margin-top:2px;">브라우저에만 저장됩니다.</div></div>
-    <div><label>Anthropic API 키 <span style="color:var(--purple);">(AI 기능)</span></label><input type="password" id="s-key" placeholder="sk-ant-..."><div style="font-size:10px;color:var(--hint);margin-top:2px;">브라우저에만 저장 · GitHub 코드에 없음</div></div>
+    <div><label>Gemini API 키 <span style="color:var(--purple);">(AI 기능)</span></label><input type="password" id="s-key" placeholder="Google AI Studio API 키"><div style="font-size:10px;color:var(--hint);margin-top:2px;">브라우저에만 저장 · aistudio.google.com에서 발급</div></div>
     <div class="modal-btns"><button class="btn btn-ghost btn-sm" onclick="closeModal('set-modal')">취소</button><button class="btn btn-primary btn-sm" onclick="saveSettings()">저장</button></div>
   </div>
 </div>
@@ -654,81 +653,47 @@ document.getElementById('t-due').value=TODAY;
 document.getElementById('tt-week').value=WEEK_MON;
 try{document.getElementById('t-due2').value=TODAY;document.getElementById('t-due2').value=TODAY;}catch(e){}
 
+// 설정
+function getGasUrl(){return localStorage.getItem('gas_url')||DEFAULT_GAS_URL;}
+function getApiKey(){return localStorage.getItem('api_key')||'';}
+function openSettings(){document.getElementById('s-gas').value=getGasUrl();document.getElementById('s-key').value=getApiKey();openModal('set-modal');}
+function saveSettings(){localStorage.setItem('gas_url',document.getElementById('s-gas').value.trim());localStorage.setItem('api_key',document.getElementById('s-key').value.trim());closeModal('set-modal');
 // ── 테마 전환 ──────────────────────────────────
 function toggleTheme() {
-  const current = document.documentElement.getAttribute('data-theme');
-  const target = current === 'light' ? 'dark' : 'light';
-  applyTheme(target);
+  const cur = document.documentElement.getAttribute('data-theme') || 'light';
+  applyTheme(cur === 'light' ? 'dark' : 'light');
 }
-
 function applyTheme(theme) {
   document.documentElement.setAttribute('data-theme', theme);
   localStorage.setItem('theme', theme);
   const icon = document.getElementById('theme-icon');
   const text = document.getElementById('theme-text');
-  if(theme === 'light') {
-    icon.textContent = '🌙';
-    text.textContent = '다크 모드';
+  if (theme === 'dark') {
+    if(icon) icon.textContent = '☀️';
+    if(text) text.textContent = '라이트 모드';
   } else {
-    icon.textContent = '☀️';
-    text.textContent = '라이트 모드';
+    if(icon) icon.textContent = '🌙';
+    if(text) text.textContent = '다크 모드';
   }
 }
+// 초기 테마: 기본값 라이트
+(function(){
+  const saved = localStorage.getItem('theme') || 'light';
+  applyTheme(saved);
+})();
 
-// 초기 테마 로드
-const savedTheme = localStorage.getItem('theme') || 'dark';
-applyTheme(savedTheme);
-
-// 설정
-function getGasUrl(){return localStorage.getItem('gas_url')||DEFAULT_GAS_URL;}
-function getApiKey(){return localStorage.getItem('api_key')||'';}
-function openSettings(){document.getElementById('s-gas').value=getGasUrl();document.getElementById('s-key').value=getApiKey();openModal('set-modal');}
-function saveSettings(){localStorage.setItem('gas_url',document.getElementById('s-gas').value.trim());localStorage.setItem('api_key',document.getElementById('s-key').value.trim());closeModal('set-modal');loadAll();}
+loadAll();}
 
 // API
-async function apiGet(action, params = {}) {
-  const url = getGasUrl();
-  if (!url) { openSettings(); return null; }
-  try {
-    const r = await fetch(url + '?' + new URLSearchParams({ action, ...params }));
-    const d = await r.json();
-    if (d.error) throw new Error(d.error);
-    return d;
-  } catch (e) {
-    console.error("GET 에러:", e);
-    return null;
-  }
+async function apiGet(action,params={}){
+  const url=getGasUrl();if(!url){openSettings();return null;}
+  try{const r=await fetch(url+'?'+new URLSearchParams({action,...params}));const d=await r.json();if(d.error)throw new Error(d.error);return d;}
+  catch(e){console.error(action,e);return null;}
 }
-
-async function apiPost(body) {
-  const url = getGasUrl();
-  if (!url) { openSettings(); return null; }
-  try {
-    // 405 에러 방지를 위해 text/plain 사용
-    const r = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'text/plain' },
-      body: JSON.stringify(body)
-    });
-    const d = await r.json();
-    if (d.error) throw new Error(d.error);
-    return d;
-  } catch (e) {
-    console.error("POST 에러:", e);
-    return null;
-  }
-}
-    const d=await r.json();
-    if(d.error) throw new Error(d.error);
-    return d;
-  }
-  catch(e){
-    console.error("API POST 에러:",e);
-    if(body.action === 'analyzeTimetable') {
-        document.getElementById('tt-ai-msg').innerHTML = `<span style="color:var(--red);">연결 오류: ${e.message}</span>`;
-    }
-    return null;
-  }
+async function apiPost(body){
+  const url=getGasUrl();if(!url){openSettings();return null;}
+  try{const r=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});const d=await r.json();if(d.error)throw new Error(d.error);return d;}
+  catch(e){console.error(body.action,e);return null;}
 }
 
 // 탭
