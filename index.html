@@ -1174,9 +1174,8 @@ async function runTTAI() {
     raw = jsonMatch[0];
     const parsed = JSON.parse(raw);
     if (parsed.rows?.length) {
-      await apiPost({action:'saveTimetable', weekStart:ws, rows:parsed.rows});
-      msg.innerHTML = '<span style="color:var(--green);font-weight:700;">✓ 인식 완료! 저장됐어요.</span>';
-      loadTTEdit();
+      // 바로 저장 안 하고 미리보기 먼저 보여주기
+      showTTPreview(parsed.rows, ws);
     } else {
       msg.innerHTML = '<span style="color:var(--red);">시간표를 인식하지 못했어요.</span>';
     }
@@ -1185,6 +1184,50 @@ async function runTTAI() {
     msg.innerHTML = '<span style="color:var(--red);">오류: ' + esc(e.message) + '</span>';
   }
   btn.disabled = false; lbl.textContent = '✨ AI로 시간표 인식';
+}
+
+// ── 시간표 AI 인식 미리보기 ──────────────────
+function showTTPreview(rows, ws) {
+  const msg = document.getElementById('tt-ai-msg');
+  const DAYS_KR = ['월','화','수','목','금'];
+  const DAYS_EN = ['mon','tue','wed','thu','fri'];
+  const todayCI = DOW >= 1 && DOW <= 5 ? DOW - 1 : -1;
+
+  // 미리보기 테이블 생성
+  let tableHTML = `<div style="margin-top:10px;">
+    <div style="font-size:11px;font-weight:700;color:var(--purple);margin-bottom:6px;">📋 인식 결과 확인 후 반영하세요</div>
+    <div style="overflow-x:auto;margin-bottom:8px;">
+      <table style="width:100%;border-collapse:collapse;font-size:11px;table-layout:fixed;">
+        <thead><tr>
+          <th style="background:var(--bg3);color:var(--muted);padding:4px 2px;text-align:center;border:1px solid var(--border);font-size:10px;width:40px;">교시</th>
+          ${DAYS_KR.map((d,i) => `<th style="background:${i===todayCI?'var(--accent-bg)':'var(--bg3)'};color:${i===todayCI?'var(--accent)':'var(--muted)'};padding:4px 2px;text-align:center;border:1px solid var(--border);font-size:10px;">${d}</th>`).join('')}
+        </tr></thead>
+        <tbody>
+          ${rows.map(r => `<tr>
+            <td style="color:var(--muted);font-size:10px;font-weight:600;background:var(--bg3);text-align:center;padding:4px 2px;border:1px solid var(--border);">${esc(r.period)}</td>
+            ${DAYS_EN.map((d,i) => {
+              const v = r[d] || '';
+              return `<td style="padding:4px 2px;text-align:center;border:1px solid var(--border);${v?'color:var(--accent);font-weight:700;background:var(--accent-bg);':'color:var(--hint);font-size:10px;'}">${v||'공강'}</td>`;
+            }).join('')}
+          </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>
+    <div style="display:flex;gap:6px;">
+      <button onclick="applyTTAI(${JSON.stringify(rows).replace(/"/g,'&quot;')}, '${ws}')" style="flex:1;padding:7px;border:none;border-radius:var(--radius-sm);background:var(--green);color:#fff;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;">✅ 반영하기</button>
+      <button onclick="document.getElementById('tt-ai-msg').innerHTML=''" style="padding:7px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);background:none;color:var(--muted);font-family:inherit;font-size:12px;cursor:pointer;">취소</button>
+    </div>
+  </div>`;
+
+  msg.innerHTML = tableHTML;
+}
+
+async function applyTTAI(rows, ws) {
+  const res = await apiPost({action:'saveTimetable', weekStart:ws, rows});
+  if (res) {
+    document.getElementById('tt-ai-msg').innerHTML = '<span style="color:var(--green);font-weight:700;">✓ 시간표가 반영됐어요!</span>';
+    loadTTEdit();
+  }
 }
 
 // ── AI 메시지 분석 ────────────────────────────
