@@ -1168,7 +1168,7 @@ async function runTTAI() {
       body: JSON.stringify({
         model: getModelVision(),
         max_tokens: 1500,
-        system: '이미지에서 시간표를 읽어 반드시 아래 JSON 형식으로만 응답하세요. 다른 말은 하지 마세요.\n{"rows":[{"period":"1교시","mon":"","tue":"","wed":"","thu":"","fri":""},...]}\n교시가 없거나 공강이면 빈 문자열. 강의실 번호나 과목명 그대로 입력.',
+        system: '이미지에서 시간표를 읽어 반드시 아래 JSON 형식으로만 응답하세요. 다른 말은 하지 마세요.\n{"weekDate":"사진 속 날짜(예:2026-04-06, 없으면 빈 문자열)","rows":[{"period":"1교시","mon":"","tue":"","wed":"","thu":"","fri":""},...]}\n교시가 없거나 공강이면 빈 문자열. 강의실 번호나 과목명 그대로 입력. weekDate는 사진에 보이는 날짜 중 가장 이른 날짜(월요일)로.',
         messages: [{ role: 'user', content: [
           { type: 'image', source: { type: 'base64', media_type: ttImgMime, data: ttImgB64 } },
           { type: 'text', text: '이 시간표를 JSON으로 변환해주세요.' }
@@ -1183,8 +1183,16 @@ async function runTTAI() {
     raw = jsonMatch[0];
     const parsed = JSON.parse(raw);
     if (parsed.rows?.length) {
-      // 바로 저장 안 하고 미리보기 먼저 보여주기
-      showTTPreview(parsed.rows, ws);
+      // 사진 속 날짜가 있으면 그 주 월요일로, 없으면 현재 tt-week 값 사용
+      let targetWs = ws;
+      if (parsed.weekDate) {
+        // 해당 날짜의 월요일 계산
+        const d = new Date(parsed.weekDate + 'T00:00:00');
+        const day = d.getDay();
+        d.setDate(d.getDate() - day + (day === 0 ? -6 : 1));
+        targetWs = d.toISOString().split('T')[0];
+      }
+      showTTPreview(parsed.rows, targetWs);
     } else {
       msg.innerHTML = '<span style="color:var(--red);">시간표를 인식하지 못했어요.</span>';
     }
@@ -1249,9 +1257,13 @@ function showTTPreview(rows, ws) {
 // AI 인식 결과 직접 저장 (입력칸 값 대신 ttData 사용)
 async function saveTTWeekFromPreview(ws) {
   const rows = ttData.map(r => ({period:r.period, mon:r.mon, tue:r.tue, wed:r.wed, thu:r.thu, fri:r.fri}));
+  // 인식된 주차(ws)로 저장
   await apiPost({action:'saveTimetable', weekStart: ws, rows});
-  document.getElementById('tt-ai-msg').innerHTML = '<span style="color:var(--green);font-weight:700;">✓ 이번 주 시간표로 저장됐어요!</span>';
-  loadTTEdit();
+  const ttWeekEl = document.getElementById('tt-week');
+  if (ttWeekEl) ttWeekEl.value = ws;
+  ttData = ttData.map(r => ({...r, weekStart: ws}));
+  document.getElementById('tt-ai-msg').innerHTML = '<span style="color:var(--green);font-weight:700;">✓ '+ws+' 주 시간표로 저장됐어요!</span>';
+  renderTTEdit(); renderHomeTT();
 }
 async function saveTTDefaultFromPreview() {
   const rows = ttData.map(r => ({period:r.period, mon:r.mon, tue:r.tue, wed:r.wed, thu:r.thu, fri:r.fri}));
