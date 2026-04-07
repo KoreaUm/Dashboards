@@ -1199,30 +1199,65 @@ async function runTTAI() {
 // ── 시간표 AI 인식 결과 → 입력칸 자동 채우기
 function showTTPreview(rows, ws) {
   const msg = document.getElementById('tt-ai-msg');
+  const DAYS_KR = ['월','화','수','목','금'];
+  const DAYS_EN = ['mon','tue','wed','thu','fri'];
+  const todayCI = DOW >= 1 && DOW <= 5 ? DOW - 1 : -1;
 
   // 1. tt-week 날짜 맞추기
   const ttWeekEl = document.getElementById('tt-week');
   if (ttWeekEl) ttWeekEl.value = ws;
 
-  // 2. ttData 업데이트 후 편집 테이블 렌더링
+  // 2. ttData 업데이트
   ttData = rows.map(r => ({
     weekStart: ws,
     period: r.period,
     mon: r.mon||'', tue: r.tue||'', wed: r.wed||'', thu: r.thu||'', fri: r.fri||''
   }));
+
+  // 3. 편집 테이블 렌더링 (입력칸에 값 채워짐)
   renderTTEdit();
   renderHomeTT();
 
-  // 3. 안내 메시지 + 저장 버튼
+  // 4. 오른쪽에 인식 결과 미리보기 + 저장 버튼
   msg.innerHTML = `
-    <div style="margin-top:8px;padding:10px;background:var(--green-bg);border:1px solid var(--green);border-radius:var(--radius-sm);">
-      <div style="font-size:11px;font-weight:700;color:var(--green);margin-bottom:6px;">✅ 인식 완료! 왼쪽에 자동으로 채워졌어요.</div>
-      <div style="font-size:11px;color:var(--muted);margin-bottom:8px;">내용을 확인하고 저장 버튼을 눌러주세요.</div>
+    <div style="margin-top:8px;">
+      <div style="font-size:11px;font-weight:700;color:var(--green);margin-bottom:6px;">✅ 인식 완료! 아래 내용을 확인하세요.</div>
+      <div style="overflow-x:auto;margin-bottom:8px;">
+        <table style="width:100%;border-collapse:collapse;font-size:11px;table-layout:fixed;">
+          <thead><tr>
+            <th style="background:var(--bg3);color:var(--muted);padding:4px 2px;text-align:center;border:1px solid var(--border);font-size:10px;width:44px;">교시</th>
+            ${DAYS_KR.map((d,i) => `<th style="background:${i===todayCI?'var(--accent-bg)':'var(--bg3)'};color:${i===todayCI?'var(--accent)':'var(--muted)'};padding:4px 2px;text-align:center;border:1px solid var(--border);font-size:10px;">${d}</th>`).join('')}
+          </tr></thead>
+          <tbody>
+            ${rows.map(r => `<tr>
+              <td style="color:var(--muted);font-size:10px;font-weight:600;background:var(--bg3);text-align:center;padding:4px 2px;border:1px solid var(--border);">${esc(r.period)}</td>
+              ${DAYS_EN.map((d,i) => {
+                const v = r[d] || '';
+                return `<td style="padding:4px 2px;text-align:center;border:1px solid var(--border);font-size:11px;${v?'color:var(--accent);font-weight:700;background:var(--accent-bg);':'color:var(--hint);'}">${esc(v)||'공강'}</td>`;
+              }).join('')}
+            </tr>`).join('')}
+          </tbody>
+        </table>
+      </div>
       <div style="display:flex;gap:6px;">
-        <button onclick="saveTTWeek()" style="flex:1;padding:7px;border:none;border-radius:var(--radius-sm);background:var(--accent);color:#fff;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;">💾 이번 주로 저장</button>
-        <button onclick="saveTTDefault()" style="flex:1;padding:7px;border:none;border-radius:var(--radius-sm);background:var(--green);color:#fff;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;">📌 기본으로 저장</button>
+        <button onclick="saveTTWeekFromPreview('${ws}')" style="flex:1;padding:7px;border:none;border-radius:var(--radius-sm);background:var(--accent);color:#fff;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;">💾 이번 주로 저장</button>
+        <button onclick="saveTTDefaultFromPreview()" style="flex:1;padding:7px;border:none;border-radius:var(--radius-sm);background:var(--green);color:#fff;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;">📌 기본으로 저장</button>
       </div>
     </div>`;
+}
+
+// AI 인식 결과 직접 저장 (입력칸 값 대신 ttData 사용)
+async function saveTTWeekFromPreview(ws) {
+  const rows = ttData.map(r => ({period:r.period, mon:r.mon, tue:r.tue, wed:r.wed, thu:r.thu, fri:r.fri}));
+  await apiPost({action:'saveTimetable', weekStart: ws, rows});
+  document.getElementById('tt-ai-msg').innerHTML = '<span style="color:var(--green);font-weight:700;">✓ 이번 주 시간표로 저장됐어요!</span>';
+  loadTTEdit();
+}
+async function saveTTDefaultFromPreview() {
+  const rows = ttData.map(r => ({period:r.period, mon:r.mon, tue:r.tue, wed:r.wed, thu:r.thu, fri:r.fri}));
+  await apiPost({action:'saveTimetable', weekStart:'default', rows});
+  document.getElementById('tt-ai-msg').innerHTML = '<span style="color:var(--green);font-weight:700;">✓ 기본 시간표로 저장됐어요!</span>';
+  loadTTEdit();
 }
 
 // ── AI 메시지 분석 ────────────────────────────
