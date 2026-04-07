@@ -499,7 +499,10 @@ select option{background:var(--bg2);}
   <div class="modal">
     <h2>⚙️ 설정</h2>
     <div><label>GAS 웹앱 URL</label><input type="url" id="s-gas" placeholder="https://script.google.com/macros/s/..."><div style="font-size:10px;color:var(--hint);margin-top:2px;">브라우저에만 저장됩니다.</div></div>
-    <div><label>OpenRouter API 키 <span style="color:var(--purple);">(AI 기능)</span></label><input type="password" id="s-key" placeholder="OpenRouter API 키 (sk-or-...)"><div style="font-size:10px;color:var(--hint);margin-top:2px;">브라우저에만 저장 · openrouter.ai에서 발급</div></div>
+    <div><label>AI 모델 (텍스트)</label><input type="text" id="s-model-text" placeholder="nvidia/nemotron-nano-12b-v2-vl:free"><div style="font-size:10px;color:var(--hint);margin-top:2px;">메시지 분석에 사용할 모델</div></div>
+    <div><label>텍스트 AI API 키 <span style="color:var(--purple);">(메시지 분석)</span></label><input type="password" id="s-key" placeholder="sk-or-v1-..."><div style="font-size:10px;color:var(--hint);margin-top:2px;">브라우저에만 저장 · openrouter.ai에서 발급</div></div>
+    <div><label>AI 모델 (Vision · 시간표 인식)</label><input type="text" id="s-model-vision" placeholder="nvidia/nemotron-nano-12b-v2-vl:free"><div style="font-size:10px;color:var(--hint);margin-top:2px;">이미지 인식에 사용할 모델 (Vision 지원 필요)</div></div>
+    <div><label>Vision AI API 키 <span style="color:var(--purple);">(시간표 인식)</span></label><input type="password" id="s-key-vision" placeholder="sk-or-v1-..."><div style="font-size:10px;color:var(--hint);margin-top:2px;">비워두면 텍스트 API 키와 동일하게 사용</div></div>
     <div class="modal-btns"><button class="btn btn-ghost btn-sm" onclick="closeModal('set-modal')">취소</button><button class="btn btn-primary btn-sm" onclick="saveSettings()">저장</button></div>
   </div>
 </div>
@@ -597,14 +600,27 @@ applyTheme(localStorage.getItem('theme') || 'light');
 // ── 설정 ──────────────────────────────────────
 function getGasUrl() { return localStorage.getItem('gas_url') || DEFAULT_GAS_URL; }
 function getApiKey() { return localStorage.getItem('api_key') || ''; }
+function getModelText()   { return localStorage.getItem('model_text')   || 'nvidia/nemotron-nano-12b-v2-vl:free'; }
+function getModelVision() { return localStorage.getItem('model_vision') || 'nvidia/nemotron-nano-12b-v2-vl:free'; }
+function getApiKeyVision() { return localStorage.getItem('api_key_vision') || getApiKey(); }
 function openSettings() {
   document.getElementById('s-gas').value = getGasUrl();
   document.getElementById('s-key').value = getApiKey();
+  document.getElementById('s-model-text').value = getModelText();
+  document.getElementById('s-key-vision').value = getApiKeyVision();
+  document.getElementById('s-model-vision').value = getModelVision();
   openModal('set-modal');
 }
 function saveSettings() {
   localStorage.setItem('gas_url', document.getElementById('s-gas').value.trim());
   localStorage.setItem('api_key', document.getElementById('s-key').value.trim());
+  const mt = document.getElementById('s-model-text').value.trim();
+  const mv = document.getElementById('s-model-vision').value.trim();
+  const kv = document.getElementById('s-key-vision').value.trim();
+  if (mt) localStorage.setItem('model_text', mt);
+  if (mv) localStorage.setItem('model_vision', mv);
+  if (kv) localStorage.setItem('api_key_vision', kv);
+  else localStorage.removeItem('api_key_vision');
   closeModal('set-modal');
   loadAll();
 }
@@ -1121,7 +1137,7 @@ function onTTFile(file) {
 function onTTDrop(e) { e.preventDefault(); document.getElementById('tt-drop').classList.remove('over'); const f = e.dataTransfer.files[0]; if (f && f.type.startsWith('image/')) onTTFile(f); }
 document.addEventListener('paste', e => { const items = [...(e.clipboardData?.items||[])]; const img = items.find(i => i.type.startsWith('image/')); if (img) onTTFile(img.getAsFile()); });
 async function runTTAI() {
-  const key = getApiKey(); if (!key) { alert('⚙️ 설정에서 API 키를 입력해주세요.'); return; }
+  const key = getApiKeyVision(); if (!key) { alert('⚙️ 설정에서 API 키를 입력해주세요.'); return; }
   if (!ttImgB64) { alert('이미지를 먼저 업로드해주세요.'); return; }
   const ws = document.getElementById('tt-week').value || WEEK_MON;
   const btn = document.getElementById('tt-ai-btn'), lbl = document.getElementById('tt-ai-lbl'), msg = document.getElementById('tt-ai-msg');
@@ -1138,7 +1154,7 @@ async function runTTAI() {
         'X-Title': 'Teacher Dashboard'
       },
       body: JSON.stringify({
-        model: 'nvidia/nemotron-nano-12b-v2-vl:free',
+        model: getModelVision(),
         messages: [
           { role: 'system', content: '이미지에서 시간표를 읽어 반드시 아래 JSON 형식으로만 응답하세요. 다른 말은 하지 마세요.\n{"rows":[{"period":"1교시","mon":"","tue":"","wed":"","thu":"","fri":""},...]}\n교시가 없거나 공강이면 빈 문자열. 강의실 번호나 과목명 그대로 입력.' },
           { role: 'user', content: [
@@ -1151,7 +1167,11 @@ async function runTTAI() {
     });
     const data = await orRes.json();
     if (data.error) throw new Error(data.error.message || JSON.stringify(data.error));
-    const raw = (data.choices?.[0]?.message?.content || '').replace(/```json|```/g,'').trim();
+    let raw = (data.choices?.[0]?.message?.content || '').replace(/```json|```/g,'').trim();
+    // JSON 부분만 추출
+    const jsonMatch = raw.match(/\{[\s\S]*\}/);
+    if (!jsonMatch) throw new Error('AI가 올바른 형식으로 응답하지 않았어요. 다시 시도해주세요.');
+    raw = jsonMatch[0];
     const parsed = JSON.parse(raw);
     if (parsed.rows?.length) {
       await apiPost({action:'saveTimetable', weekStart:ws, rows:parsed.rows});
@@ -1186,7 +1206,7 @@ async function runMsgAI() {
         'X-Title': 'Teacher Dashboard'
       },
       body: JSON.stringify({
-        model: 'nvidia/nemotron-nano-12b-v2-vl:free',
+        model: getModelText(),
         messages: [
           { role: 'system', content: `당신은 교사를 돕는 할 일 추출 AI입니다. 오늘 날짜는 ${today}입니다. 메시지에서 해야 할 일을 추출해서 반드시 아래 JSON 형식으로만 응답하세요. 다른 말은 하지 마세요. {"tasks":[{"text":"할 일 내용(20자 이내)","due":"YYYY-MM-DD 또는 빈 문자열","priority":"high/mid/low","reason":"이유 한 줄"}]} 마감 3일 이내=high, 일주일 이내=mid, 그 외=low.` },
           { role: 'user', content: msg }
@@ -1196,8 +1216,10 @@ async function runMsgAI() {
     });
     const data = await orRes.json();
     if (data.error) throw new Error(data.error.message || JSON.stringify(data.error));
-    const raw = (data.choices?.[0]?.message?.content || '').replace(/```json|```/g,'').trim();
-    result = JSON.parse(raw);
+    let raw = (data.choices?.[0]?.message?.content || '').replace(/```json|```/g,'').trim();
+    const jsonMatch2 = raw.match(/\{[\s\S]*\}/);
+    if (!jsonMatch2) throw new Error('AI가 올바른 형식으로 응답하지 않았어요. 다시 시도해주세요.');
+    result = JSON.parse(jsonMatch2[0]);
   } catch(e) {
     out.innerHTML = '<div style="color:var(--red);font-size:11px;margin-top:6px;">오류: ' + esc(e.message) + '</div>';
     btn.disabled = false; lbl.textContent = '✨ AI로 할 일 추출';
