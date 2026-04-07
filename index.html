@@ -500,9 +500,9 @@ select option{background:var(--bg2);}
     <h2>⚙️ 설정</h2>
     <div><label>GAS 웹앱 URL</label><input type="url" id="s-gas" placeholder="https://script.google.com/macros/s/..."><div style="font-size:10px;color:var(--hint);margin-top:2px;">브라우저에만 저장됩니다.</div></div>
     <div><label>AI 모델 (텍스트)</label><input type="text" id="s-model-text" placeholder="nvidia/nemotron-nano-12b-v2-vl:free"><div style="font-size:10px;color:var(--hint);margin-top:2px;">메시지 분석에 사용할 모델</div></div>
-    <div><label>텍스트 AI API 키 <span style="color:var(--purple);">(메시지 분석)</span></label><input type="password" id="s-key" placeholder="sk-or-v1-..."><div style="font-size:10px;color:var(--hint);margin-top:2px;">브라우저에만 저장 · openrouter.ai에서 발급</div></div>
+    <div><label>텍스트 AI API 키 <span style="color:var(--purple);">(메시지 분석)</span></label><input type="password" id="s-key" placeholder="sk-ant-api03-..."><div style="font-size:10px;color:var(--hint);margin-top:2px;">브라우저에만 저장 · console.anthropic.com에서 발급</div></div>
     <div><label>AI 모델 (Vision · 시간표 인식)</label><input type="text" id="s-model-vision" placeholder="nvidia/nemotron-nano-12b-v2-vl:free"><div style="font-size:10px;color:var(--hint);margin-top:2px;">이미지 인식에 사용할 모델 (Vision 지원 필요)</div></div>
-    <div><label>Vision AI API 키 <span style="color:var(--purple);">(시간표 인식)</span></label><input type="password" id="s-key-vision" placeholder="sk-or-v1-..."><div style="font-size:10px;color:var(--hint);margin-top:2px;">비워두면 텍스트 API 키와 동일하게 사용</div></div>
+    <div><label>Vision AI API 키 <span style="color:var(--purple);">(시간표 인식)</span></label><input type="password" id="s-key-vision" placeholder="sk-ant-api03-..."><div style="font-size:10px;color:var(--hint);margin-top:2px;">비워두면 텍스트 API 키와 동일하게 사용</div></div>
     <div class="modal-btns"><button class="btn btn-ghost btn-sm" onclick="closeModal('set-modal')">취소</button><button class="btn btn-primary btn-sm" onclick="saveSettings()">저장</button></div>
   </div>
 </div>
@@ -612,8 +612,8 @@ applyTheme(localStorage.getItem('theme') || 'light');
 // ── 설정 ──────────────────────────────────────
 function getGasUrl() { return localStorage.getItem('gas_url') || DEFAULT_GAS_URL; }
 function getApiKey() { return localStorage.getItem('api_key') || ''; }
-function getModelText()   { return localStorage.getItem('model_text')   || 'nvidia/nemotron-nano-12b-v2-vl:free'; }
-function getModelVision() { return localStorage.getItem('model_vision') || 'nvidia/nemotron-nano-12b-v2-vl:free'; }
+function getModelText()   { return localStorage.getItem('model_text')   || 'claude-haiku-4-5'; }
+function getModelVision() { return localStorage.getItem('model_vision') || 'claude-haiku-4-5'; }
 function getApiKeyVision() { return localStorage.getItem('api_key_vision') || getApiKey(); }
 function openSettings() {
   document.getElementById('s-gas').value = getGasUrl();
@@ -1157,30 +1157,27 @@ async function runTTAI() {
   try {
     // 이미지가 커서 GAS 경유 불가 → 브라우저에서 직접 Gemini API 호출
     // OpenRouter Qwen Vision API 호출 (CORS 허용)
-    const orRes = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+    const claudeRes = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${key}`,
-        'HTTP-Referer': location.origin,
-        'X-Title': 'Teacher Dashboard'
+        'x-api-key': key,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
       },
       body: JSON.stringify({
         model: getModelVision(),
-        messages: [
-          { role: 'system', content: '이미지에서 시간표를 읽어 반드시 아래 JSON 형식으로만 응답하세요. 다른 말은 하지 마세요.\n{"rows":[{"period":"1교시","mon":"","tue":"","wed":"","thu":"","fri":""},...]}\n교시가 없거나 공강이면 빈 문자열. 강의실 번호나 과목명 그대로 입력.' },
-          { role: 'user', content: [
-            { type: 'image_url', image_url: { url: `data:${ttImgMime};base64,${ttImgB64}` } },
-            { type: 'text', text: '이 시간표를 JSON으로 변환해주세요.' }
-          ]}
-        ],
-        max_tokens: 1500
+        max_tokens: 1500,
+        system: '이미지에서 시간표를 읽어 반드시 아래 JSON 형식으로만 응답하세요. 다른 말은 하지 마세요.\n{"rows":[{"period":"1교시","mon":"","tue":"","wed":"","thu":"","fri":""},...]}\n교시가 없거나 공강이면 빈 문자열. 강의실 번호나 과목명 그대로 입력.',
+        messages: [{ role: 'user', content: [
+          { type: 'image', source: { type: 'base64', media_type: ttImgMime, data: ttImgB64 } },
+          { type: 'text', text: '이 시간표를 JSON으로 변환해주세요.' }
+        ]}]
       })
     });
-    const data = await orRes.json();
+    const data = await claudeRes.json();
     if (data.error) throw new Error(data.error.message || JSON.stringify(data.error));
-    let raw = (data.choices?.[0]?.message?.content || '').replace(/```json|```/g,'').trim();
-    // JSON 부분만 추출
+    let raw = (data.content?.[0]?.text || '').replace(/```json|```/g,'').trim();
     const jsonMatch = raw.match(/\{[\s\S]*\}/);
     if (!jsonMatch) throw new Error('AI가 올바른 형식으로 응답하지 않았어요. 다시 시도해주세요.');
     raw = jsonMatch[0];
@@ -1238,28 +1235,26 @@ async function runMsgAI() {
   let result = null;
   try {
     const today = new Date().toLocaleDateString('ko-KR', {year:'numeric',month:'long',day:'numeric'});
-    const orRes = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+    const claudeRes = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${key}`,
-        'HTTP-Referer': location.origin,
-        'X-Title': 'Teacher Dashboard'
+        'x-api-key': key,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
       },
       body: JSON.stringify({
         model: getModelText(),
-        messages: [
-          { role: 'system', content: `당신은 교사를 돕는 할 일 추출 AI입니다. 오늘 날짜는 ${today}입니다. 메시지에서 해야 할 일을 추출해서 반드시 아래 JSON 형식으로만 응답하세요. 다른 말은 하지 마세요.
+        max_tokens: 1024,
+        system: `당신은 교사를 돕는 할 일 추출 AI입니다. 오늘 날짜는 ${today}입니다. 메시지에서 해야 할 일을 추출해서 반드시 아래 JSON 형식으로만 응답하세요. 다른 말은 하지 마세요.
 {"tasks":[{"text":"할 일 제목(20자 이내)","due":"YYYY-MM-DD 또는 빈 문자열","deadline_label":"내일까지 제출 / 4월 10일까지 완료 등 (없으면 빈 문자열)","summary":"내용 1~2줄 요약","priority":"high/mid/low"}]}
-마감 3일 이내=high, 일주일 이내=mid, 그 외=low. 날짜/기한이 명시되면 반드시 due와 deadline_label을 채우세요.` },
-          { role: 'user', content: msg }
-        ],
-        max_tokens: 1000
+마감 3일 이내=high, 일주일 이내=mid, 그 외=low. 날짜/기한이 명시되면 반드시 due와 deadline_label을 채우세요.`,
+        messages: [{ role: 'user', content: msg }]
       })
     });
-    const data = await orRes.json();
+    const data = await claudeRes.json();
     if (data.error) throw new Error(data.error.message || JSON.stringify(data.error));
-    let raw = (data.choices?.[0]?.message?.content || '').replace(/```json|```/g,'').trim();
+    let raw = (data.content?.[0]?.text || '').replace(/```json|```/g,'').trim();
     const jsonMatch2 = raw.match(/\{[\s\S]*\}/);
     if (!jsonMatch2) throw new Error('AI가 올바른 형식으로 응답하지 않았어요. 다시 시도해주세요.');
     result = JSON.parse(jsonMatch2[0]);
