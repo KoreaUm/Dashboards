@@ -536,8 +536,20 @@ select option{background:var(--bg2);}
 <div class="overlay" id="sc-modal">
   <div class="modal">
     <h2>바로가기 추가</h2>
-    <div><label>이름</label><input type="text" id="scm-label" placeholder="나이스"></div>
-    <div><label>URL</label><input type="url" id="scm-url" placeholder="https://neis.go.kr"></div>
+    <div><label>이름</label><input type="text" id="scm-label" placeholder="수업자료 폴더"></div>
+    <div>
+      <label>종류</label>
+      <div style="display:flex;gap:6px;margin-bottom:8px;">
+        <button id="sc-type-web" class="btn btn-primary btn-sm" onclick="setScType('web')">🌐 웹사이트</button>
+        <button id="sc-type-folder" class="btn btn-ghost btn-sm" onclick="setScType('folder')">📁 폴더</button>
+      </div>
+    </div>
+    <div id="scm-url-wrap"><label>URL</label><input type="text" id="scm-url" placeholder="https://neis.go.kr"></div>
+    <div id="scm-path-wrap" style="display:none;">
+      <label>폴더 경로</label>
+      <input type="text" id="scm-path" placeholder="C:\Users\이름\Documents\수업자료">
+      <div style="font-size:10px;color:var(--hint);margin-top:2px;">탐색기에서 폴더 열고 주소창 경로 복사하세요</div>
+    </div>
     <div><label>색상</label><div class="color-opts" id="sc-colors"></div></div>
     <div class="modal-btns"><button class="btn btn-ghost btn-sm" onclick="closeModal('sc-modal')">취소</button><button class="btn btn-primary btn-sm" onclick="saveSc()">저장</button></div>
   </div>
@@ -1187,64 +1199,33 @@ async function runTTAI() {
 }
 
 // ── 시간표 AI 인식 미리보기 ──────────────────
-let ttPreviewRows = [], ttPreviewWs = '';
-
+// ── 시간표 AI 인식 결과 → 입력칸 자동 채우기
 function showTTPreview(rows, ws) {
-  ttPreviewRows = rows;
-  ttPreviewWs = ws;
   const msg = document.getElementById('tt-ai-msg');
-  const DAYS_KR = ['월','화','수','목','금'];
-  const DAYS_EN = ['mon','tue','wed','thu','fri'];
-  const todayCI = DOW >= 1 && DOW <= 5 ? DOW - 1 : -1;
 
-  let tableHTML = `<div style="margin-top:10px;">
-    <div style="font-size:11px;font-weight:700;color:var(--purple);margin-bottom:6px;">📋 인식 결과 확인 후 반영하세요</div>
-    <div style="overflow-x:auto;margin-bottom:8px;">
-      <table style="width:100%;border-collapse:collapse;font-size:11px;table-layout:fixed;">
-        <thead><tr>
-          <th style="background:var(--bg3);color:var(--muted);padding:4px 2px;text-align:center;border:1px solid var(--border);font-size:10px;width:40px;">교시</th>
-          ${DAYS_KR.map((d,i) => `<th style="background:${i===todayCI?'var(--accent-bg)':'var(--bg3)'};color:${i===todayCI?'var(--accent)':'var(--muted)'};padding:4px 2px;text-align:center;border:1px solid var(--border);font-size:10px;">${d}</th>`).join('')}
-        </tr></thead>
-        <tbody>
-          ${rows.map(r => `<tr>
-            <td style="color:var(--muted);font-size:10px;font-weight:600;background:var(--bg3);text-align:center;padding:4px 2px;border:1px solid var(--border);">${esc(r.period)}</td>
-            ${DAYS_EN.map((d,i) => {
-              const v = r[d] || '';
-              return `<td style="padding:4px 2px;text-align:center;border:1px solid var(--border);${v?'color:var(--accent);font-weight:700;background:var(--accent-bg);':'color:var(--hint);font-size:10px;'}">${v||'공강'}</td>`;
-            }).join('')}
-          </tr>`).join('')}
-        </tbody>
-      </table>
-    </div>
-    <div style="display:flex;gap:6px;">
-      <button onclick="applyTTAI()" style="flex:1;padding:7px;border:none;border-radius:var(--radius-sm);background:var(--green);color:#fff;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;">✅ 반영하기</button>
-      <button onclick="document.getElementById('tt-ai-msg').innerHTML='';ttPreviewRows=[];ttPreviewWs='';" style="padding:7px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);background:none;color:var(--muted);font-family:inherit;font-size:12px;cursor:pointer;">취소</button>
-    </div>
-  </div>`;
+  // 1. tt-week 날짜 맞추기
+  const ttWeekEl = document.getElementById('tt-week');
+  if (ttWeekEl) ttWeekEl.value = ws;
 
-  msg.innerHTML = tableHTML;
-}
+  // 2. ttData 업데이트 후 편집 테이블 렌더링
+  ttData = rows.map(r => ({
+    weekStart: ws,
+    period: r.period,
+    mon: r.mon||'', tue: r.tue||'', wed: r.wed||'', thu: r.thu||'', fri: r.fri||''
+  }));
+  renderTTEdit();
+  renderHomeTT();
 
-async function applyTTAI() {
-  if (!ttPreviewRows.length) return;
-  const btn = document.querySelector('#tt-ai-msg button');
-  const res = await apiPost({action:'saveTimetable', weekStart:ttPreviewWs, rows:ttPreviewRows});
-  if (res) {
-    // tt-week 날짜를 저장한 주차로 맞추기
-    const ttWeekEl = document.getElementById('tt-week');
-    if (ttWeekEl) ttWeekEl.value = ttPreviewWs;
-    // ttData를 미리보기 rows로 직접 업데이트 (API 재호출 없이 즉시 반영)
-    ttData = ttPreviewRows.map(r => ({
-      weekStart: ttPreviewWs,
-      period: r.period,
-      mon: r.mon||'', tue: r.tue||'', wed: r.wed||'', thu: r.thu||'', fri: r.fri||''
-    }));
-    ttPreviewRows = []; ttPreviewWs = '';
-    // 왼쪽 편집 테이블 + 홈 시간표 동시 갱신
-    renderTTEdit();
-    renderHomeTT();
-    document.getElementById('tt-ai-msg').innerHTML = '<span style="color:var(--green);font-weight:700;">✓ 시간표가 반영됐어요!</span>';
-  }
+  // 3. 안내 메시지 + 저장 버튼
+  msg.innerHTML = `
+    <div style="margin-top:8px;padding:10px;background:var(--green-bg);border:1px solid var(--green);border-radius:var(--radius-sm);">
+      <div style="font-size:11px;font-weight:700;color:var(--green);margin-bottom:6px;">✅ 인식 완료! 왼쪽에 자동으로 채워졌어요.</div>
+      <div style="font-size:11px;color:var(--muted);margin-bottom:8px;">내용을 확인하고 저장 버튼을 눌러주세요.</div>
+      <div style="display:flex;gap:6px;">
+        <button onclick="saveTTWeek()" style="flex:1;padding:7px;border:none;border-radius:var(--radius-sm);background:var(--accent);color:#fff;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;">💾 이번 주로 저장</button>
+        <button onclick="saveTTDefault()" style="flex:1;padding:7px;border:none;border-radius:var(--radius-sm);background:var(--green);color:#fff;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;">📌 기본으로 저장</button>
+      </div>
+    </div>`;
 }
 
 // ── AI 메시지 분석 ────────────────────────────
@@ -1268,7 +1249,9 @@ async function runMsgAI() {
       body: JSON.stringify({
         model: getModelText(),
         messages: [
-          { role: 'system', content: `당신은 교사를 돕는 할 일 추출 AI입니다. 오늘 날짜는 ${today}입니다. 메시지에서 해야 할 일을 추출해서 반드시 아래 JSON 형식으로만 응답하세요. 다른 말은 하지 마세요. {"tasks":[{"text":"할 일 내용(20자 이내)","due":"YYYY-MM-DD 또는 빈 문자열","priority":"high/mid/low","reason":"이유 한 줄"}]} 마감 3일 이내=high, 일주일 이내=mid, 그 외=low.` },
+          { role: 'system', content: `당신은 교사를 돕는 할 일 추출 AI입니다. 오늘 날짜는 ${today}입니다. 메시지에서 해야 할 일을 추출해서 반드시 아래 JSON 형식으로만 응답하세요. 다른 말은 하지 마세요.
+{"tasks":[{"text":"할 일 제목(20자 이내)","due":"YYYY-MM-DD 또는 빈 문자열","deadline_label":"내일까지 제출 / 4월 10일까지 완료 등 (없으면 빈 문자열)","summary":"내용 1~2줄 요약","priority":"high/mid/low"}]}
+마감 3일 이내=high, 일주일 이내=mid, 그 외=low. 날짜/기한이 명시되면 반드시 due와 deadline_label을 채우세요.` },
           { role: 'user', content: msg }
         ],
         max_tokens: 1000
@@ -1291,15 +1274,16 @@ async function runMsgAI() {
       out.innerHTML = `<div style="font-size:10px;color:var(--purple);font-weight:700;margin:6px 0 4px;">📋 ${result.tasks.length}개 추출됨</div>` +
         result.tasks.map((t,i) => {
           const dD = t.due ? (()=>{ const d=new Date(t.due+'T00:00:00'); return (d.getMonth()+1)+'/'+(d.getDate()); })() : '기한없음';
+          const dlLabel = t.deadline_label || (dD ? dD+'까지' : '');
           return `<div class="ai-result" id="air-${i}">
             <div style="font-size:12px;font-weight:700;">${esc(t.text)}</div>
-            <div style="display:flex;gap:4px;margin-top:3px;flex-wrap:wrap;align-items:center;">
+            ${dlLabel ? `<div style="font-size:11px;color:var(--red);font-weight:700;margin-top:3px;">📅 ${esc(dlLabel)}</div>` : ''}
+            ${t.summary ? `<div style="font-size:11px;color:var(--muted);margin-top:3px;line-height:1.5;">${esc(t.summary)}</div>` : ''}
+            <div style="display:flex;gap:4px;margin-top:4px;">
               <span class="badge ${PC[t.priority]||'bm'}">${PL[t.priority]||'보통'}</span>
-              <span style="font-size:10px;color:var(--muted);">📅 ${dD}</span>
-              <span style="font-size:10px;color:var(--muted);">${esc(t.reason||'')}</span>
             </div>
-            <div style="display:flex;gap:5px;margin-top:5px;">
-              <button class="ai-add-btn" id="air-add-${i}" onclick="addFromAI(${i},'${esc(t.text).replace(/'/g,"\\'")}','${t.due||''}','${t.priority||'mid'}')">+ 추가</button>
+            <div style="display:flex;gap:5px;margin-top:6px;">
+              <button class="ai-add-btn" id="air-add-${i}" onclick="addFromAI(${i},'${esc(t.text).replace(/'/g,"\'")}','${t.due||''}','${t.priority||'mid'}')">+ 추가</button>
               <button class="ai-skip-btn" onclick="skipAI(${i})">건너뜀</button>
             </div>
           </div>`;
@@ -1327,18 +1311,41 @@ SC_COLORS.forEach((c,i) => {
   scColorEl.appendChild(d);
 });
 async function loadShortcuts() { shortcuts = await apiGet('getShortcuts') || []; renderShortcuts(); }
-function openScModal() { document.getElementById('scm-label').value = ''; document.getElementById('scm-url').value = ''; openModal('sc-modal'); }
+
 function getIcon(url) {
   if(url.includes('drive.google')) return '📁'; if(url.includes('classroom.google')) return '🖥️';
   if(url.includes('docs.google')) return '📄'; if(url.includes('sheets.google')) return '📊';
   if(url.includes('neis')) return '👤'; if(url.includes('youtube')) return '▶️';
   if(url.includes('github')) return '🐱'; if(url.includes('notion')) return '📝'; return '🔗';
 }
+let scType = 'web';
+function setScType(type) {
+  scType = type;
+  document.getElementById('sc-type-web').className = type==='web' ? 'btn btn-primary btn-sm' : 'btn btn-ghost btn-sm';
+  document.getElementById('sc-type-folder').className = type==='folder' ? 'btn btn-primary btn-sm' : 'btn btn-ghost btn-sm';
+  document.getElementById('scm-url-wrap').style.display = type==='web' ? 'block' : 'none';
+  document.getElementById('scm-path-wrap').style.display = type==='folder' ? 'block' : 'none';
+}
+function openScModal() {
+  document.getElementById('scm-label').value = '';
+  document.getElementById('scm-url').value = '';
+  document.getElementById('scm-path').value = '';
+  setScType('web');
+  openModal('sc-modal');
+}
 async function saveSc() {
   const label = document.getElementById('scm-label').value.trim(); if (!label) return;
-  const url = document.getElementById('scm-url').value.trim(); if (!url) return;
-  const full = url.startsWith('http') ? url : 'https://' + url;
-  await apiPost({action:'addShortcut', label, url:full, color:scSelColor, icon:getIcon(full)});
+  let url, icon;
+  if (scType === 'folder') {
+    const path = document.getElementById('scm-path').value.trim(); if (!path) return;
+    url = 'file:///' + path.replace(/\\/g, '/');
+    icon = '📁';
+  } else {
+    const rawUrl = document.getElementById('scm-url').value.trim(); if (!rawUrl) return;
+    url = rawUrl.startsWith('http') ? rawUrl : 'https://' + rawUrl;
+    icon = getIcon(url);
+  }
+  await apiPost({action:'addShortcut', label, url, color:scSelColor, icon});
   closeModal('sc-modal'); loadShortcuts();
 }
 async function deleteSC(id) { if (!confirm('삭제?')) return; await apiPost({action:'deleteShortcut', id}); loadShortcuts(); }
