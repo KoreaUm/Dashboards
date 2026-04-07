@@ -1215,10 +1215,16 @@ function showTTPreview(rows, ws) {
   const ttWeekEl = document.getElementById('tt-week');
   if (ttWeekEl) ttWeekEl.value = ws;
 
-  // 2. ttData 업데이트
+  // 2. ttData 업데이트 (period 정규화: "1(08:40)" → "1교시")
+  const normPeriod = (p) => {
+    if (!p) return '';
+    // 숫자만 추출해서 N교시로 변환
+    const m = String(p).match(/^(\d+)/);
+    return m ? m[1] + '교시' : String(p);
+  };
   ttData = rows.map(r => ({
     weekStart: ws,
-    period: r.period,
+    period: normPeriod(r.period),
     mon: r.mon||'', tue: r.tue||'', wed: r.wed||'', thu: r.thu||'', fri: r.fri||''
   }));
 
