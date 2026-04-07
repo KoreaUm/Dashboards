@@ -91,14 +91,16 @@ body{font-family:'Pretendard','Apple SD Gothic Neo','Noto Sans KR',sans-serif;ba
 
 /* 시간표 */
 .tt-compact{width:100%;border-collapse:collapse;font-size:11px;table-layout:fixed;}
-.tt-compact th{background:var(--bg3);color:var(--muted);padding:4px 2px;text-align:center;border:1px solid var(--border);font-size:10px;font-weight:600;}
-.tt-compact th.tc{background:var(--accent-bg);color:var(--accent);}
-.tt-compact td{padding:4px 2px;text-align:center;border:1px solid var(--border);font-size:11px;}
-.tt-compact td.pl{color:var(--muted);font-size:10px;font-weight:600;background:var(--bg3);}
-.tt-compact td.rc{color:var(--accent);font-weight:700;background:var(--accent-bg);}
-.tt-compact td.fc{color:var(--hint);font-size:10px;}
-.tt-compact td.tc{background:var(--accent-bg);opacity:.5;}
-.tt-compact td.rc.tc{background:var(--accent-bg);}
+.tt-compact th{background:var(--bg3);color:var(--muted);padding:5px 2px;text-align:center;border:1px solid var(--border);font-size:10px;font-weight:700;}
+.tt-compact th.tc{background:var(--accent);color:#fff;border-left:3px solid #0a3d7a;border-right:3px solid #0a3d7a;}
+.tt-compact td{padding:6px 2px;text-align:center;border:1px solid var(--border);font-size:11px;}
+.tt-compact td.pl{color:var(--muted);font-size:10px;font-weight:700;background:var(--bg3);}
+.tt-compact td.rc{color:#fff;font-weight:700;background:var(--accent);}
+.tt-compact td.fc{color:var(--border2);font-size:10px;}
+.tt-compact td.tc{background:rgba(24,95,165,0.06);border-left:3px solid #0a3d7a;border-right:3px solid #0a3d7a;}
+.tt-compact td.rc.tc{background:#0e4a82;color:#fff;border-left:3px solid #061f3d;border-right:3px solid #061f3d;}
+.tt-compact tr:last-child td.tc{border-bottom:3px solid #0a3d7a;}
+.tt-compact thead tr th.tc{border-top:3px solid #0a3d7a;}
 .tbadge{display:inline-block;font-size:8px;background:var(--accent);color:#fff;border-radius:3px;padding:0 4px;margin-left:2px;vertical-align:middle;}
 
 /* 투두 */
