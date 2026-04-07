@@ -1227,11 +1227,23 @@ function showTTPreview(rows, ws) {
 
 async function applyTTAI() {
   if (!ttPreviewRows.length) return;
+  const btn = document.querySelector('#tt-ai-msg button');
   const res = await apiPost({action:'saveTimetable', weekStart:ttPreviewWs, rows:ttPreviewRows});
   if (res) {
-    document.getElementById('tt-ai-msg').innerHTML = '<span style="color:var(--green);font-weight:700;">✓ 시간표가 반영됐어요!</span>';
+    // tt-week 날짜를 저장한 주차로 맞추기
+    const ttWeekEl = document.getElementById('tt-week');
+    if (ttWeekEl) ttWeekEl.value = ttPreviewWs;
+    // ttData를 미리보기 rows로 직접 업데이트 (API 재호출 없이 즉시 반영)
+    ttData = ttPreviewRows.map(r => ({
+      weekStart: ttPreviewWs,
+      period: r.period,
+      mon: r.mon||'', tue: r.tue||'', wed: r.wed||'', thu: r.thu||'', fri: r.fri||''
+    }));
     ttPreviewRows = []; ttPreviewWs = '';
-    loadTTEdit();
+    // 왼쪽 편집 테이블 + 홈 시간표 동시 갱신
+    renderTTEdit();
+    renderHomeTT();
+    document.getElementById('tt-ai-msg').innerHTML = '<span style="color:var(--green);font-weight:700;">✓ 시간표가 반영됐어요!</span>';
   }
 }
 
