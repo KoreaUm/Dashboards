@@ -472,7 +472,7 @@ select option{background:var(--bg2);}
         <span class="card-ttl" style="color:var(--purple);">📷 스크린샷 AI 인식</span>
         <span style="font-size:9px;background:var(--purple-bg);color:var(--purple);border-radius:20px;padding:1px 7px;font-weight:700;">Vision</span>
       </div>
-      <div style="font-size:11px;color:var(--muted);margin-bottom:8px;">시간표 스크린샷을 업로드하면 AI가 읽어줘요.<br><span style="color:var(--amber);">⚠️ DeepSeek은 이미지 인식 미지원 — 아래 직접 입력을 이용해주세요.</span></div>
+      <div style="font-size:11px;color:var(--muted);margin-bottom:8px;">시간표 스크린샷을 업로드하면 AI가 읽어줘요.</div>
       <div class="drop-zone" id="tt-drop" onclick="document.getElementById('tt-file').click()" ondragover="event.preventDefault();this.classList.add('over')" ondragleave="this.classList.remove('over')" ondrop="onTTDrop(event)">
         <div id="tt-drop-txt">📷 클릭 · 드래그 · Ctrl+V</div>
         <img id="tt-prev" style="display:none;max-width:100%;max-height:120px;margin:8px auto 0;border-radius:5px;">
@@ -1138,7 +1138,7 @@ async function runTTAI() {
         'X-Title': 'Teacher Dashboard'
       },
       body: JSON.stringify({
-        model: 'minimax/minimax-m2.5:free',
+        model: 'qwen/qwen3.6-plus:free',
         messages: [
           { role: 'system', content: '이미지에서 시간표를 읽어 반드시 아래 JSON 형식으로만 응답하세요. 다른 말은 하지 마세요.\n{"rows":[{"period":"1교시","mon":"","tue":"","wed":"","thu":"","fri":""},...]}\n교시가 없거나 공강이면 빈 문자열. 강의실 번호나 과목명 그대로 입력.' },
           { role: 'user', content: [
@@ -1186,7 +1186,7 @@ async function runMsgAI() {
         'X-Title': 'Teacher Dashboard'
       },
       body: JSON.stringify({
-        model: 'minimax/minimax-m2.5:free',
+        model: 'qwen/qwen3.6-plus:free',
         messages: [
           { role: 'system', content: `당신은 교사를 돕는 할 일 추출 AI입니다. 오늘 날짜는 ${today}입니다. 메시지에서 해야 할 일을 추출해서 반드시 아래 JSON 형식으로만 응답하세요. 다른 말은 하지 마세요. {"tasks":[{"text":"할 일 내용(20자 이내)","due":"YYYY-MM-DD 또는 빈 문자열","priority":"high/mid/low","reason":"이유 한 줄"}]} 마감 3일 이내=high, 일주일 이내=mid, 그 외=low.` },
           { role: 'user', content: msg }
