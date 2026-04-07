@@ -1138,7 +1138,7 @@ async function runTTAI() {
         'X-Title': 'Teacher Dashboard'
       },
       body: JSON.stringify({
-        model: 'google/gemma-3-4b-it:free',
+        model: 'nvidia/nemotron-nano-12b-v2-vl:free',
         messages: [
           { role: 'system', content: '이미지에서 시간표를 읽어 반드시 아래 JSON 형식으로만 응답하세요. 다른 말은 하지 마세요.\n{"rows":[{"period":"1교시","mon":"","tue":"","wed":"","thu":"","fri":""},...]}\n교시가 없거나 공강이면 빈 문자열. 강의실 번호나 과목명 그대로 입력.' },
           { role: 'user', content: [
@@ -1186,7 +1186,7 @@ async function runMsgAI() {
         'X-Title': 'Teacher Dashboard'
       },
       body: JSON.stringify({
-        model: 'google/gemma-3-4b-it:free',
+        model: 'nvidia/nemotron-nano-12b-v2-vl:free',
         messages: [
           { role: 'system', content: `당신은 교사를 돕는 할 일 추출 AI입니다. 오늘 날짜는 ${today}입니다. 메시지에서 해야 할 일을 추출해서 반드시 아래 JSON 형식으로만 응답하세요. 다른 말은 하지 마세요. {"tasks":[{"text":"할 일 내용(20자 이내)","due":"YYYY-MM-DD 또는 빈 문자열","priority":"high/mid/low","reason":"이유 한 줄"}]} 마감 3일 이내=high, 일주일 이내=mid, 그 외=low.` },
           { role: 'user', content: msg }
