@@ -1268,8 +1268,10 @@ async function saveTTWeekFromPreview(ws) {
 async function saveTTDefaultFromPreview() {
   const rows = ttData.map(r => ({period:r.period, mon:r.mon, tue:r.tue, wed:r.wed, thu:r.thu, fri:r.fri}));
   await apiPost({action:'saveTimetable', weekStart:'default', rows});
+  // loadTTEdit 대신 현재 ttData로 바로 렌더링 (기본값으로 리셋 방지)
+  ttData = ttData.map(r => ({...r, weekStart:'default'}));
+  renderTTEdit(); renderHomeTT();
   document.getElementById('tt-ai-msg').innerHTML = '<span style="color:var(--green);font-weight:700;">✓ 기본 시간표로 저장됐어요!</span>';
-  loadTTEdit();
 }
 
 // ── AI 메시지 분석 ────────────────────────────
