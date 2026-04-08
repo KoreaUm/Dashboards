@@ -1323,6 +1323,8 @@ async function runMsgAI() {
   if (result?.tasks) {
     if (!result.tasks.length) { out.innerHTML = '<div class="empty">추출된 할 일이 없어요</div>'; }
     else {
+      // 전역으로 저장 (addFromAI에서 사용)
+      window._aiTasks = result.tasks;
       out.innerHTML = `<div style="font-size:10px;color:var(--purple);font-weight:700;margin:6px 0 4px;">📋 ${result.tasks.length}개 추출됨</div>` +
         result.tasks.map((t,i) => {
           const dD = t.due ? (()=>{ const d=new Date(t.due+'T00:00:00'); return (d.getMonth()+1)+'/'+(d.getDate()); })() : '기한없음';
@@ -1335,7 +1337,7 @@ async function runMsgAI() {
               <span class="badge ${PC[t.priority]||'bm'}">${PL[t.priority]||'보통'}</span>
             </div>
             <div style="display:flex;gap:5px;margin-top:6px;">
-              <button class="ai-add-btn" id="air-add-${i}" onclick="addFromAI(${i},'${esc(t.text).replace(/'/g,"\'")}','${t.due||''}','${t.priority||'mid'}')">+ 추가</button>
+              <button class="ai-add-btn" id="air-add-${i}" onclick="addFromAI(${i})">+ 추가</button>
               <button class="ai-skip-btn" onclick="skipAI(${i})">건너뜀</button>
             </div>
           </div>`;
@@ -1344,9 +1346,13 @@ async function runMsgAI() {
   } else { out.innerHTML = '<div style="color:var(--red);font-size:11px;margin-top:6px;">오류가 발생했어요.</div>'; }
   btn.disabled = false; lbl.textContent = '✨ AI로 할 일 추출';
 }
-async function addFromAI(i, text, due, priority) {
+async function addFromAI(i) {
   const btn = document.getElementById('air-add-'+i); btn.disabled = true; btn.textContent = '추가 중...';
-  await addTodoAI(text, due, priority);
+  const t = (window._aiTasks || [])[i];
+  if (!t) return;
+  // 제목 + 요약 합치기
+  const fullText = t.summary ? t.text + ' — ' + t.summary : t.text;
+  await addTodoAI(fullText, t.due||'', t.priority||'mid');
   btn.textContent = '✓ 추가됨'; btn.classList.add('added');
   document.getElementById('air-'+i).style.opacity = '0.5';
 }
