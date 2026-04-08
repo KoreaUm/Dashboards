@@ -754,8 +754,11 @@ function renderTodos() {
     let due = ''; if(t.due){const d=new Date(t.due+'T00:00:00');due=(d.getMonth()+1)+'/'+d.getDate();if(isT)due='오늘 마감';if(iso)due='기한 초과 ('+due+')';}
     return `<div class="list-item">
       <input type="checkbox" class="todo-chk" ${t.done?'checked':''} onchange="toggleTodo(${t.id},this.checked)">
-      <div class="list-body"><div class="todo-txt${t.done?' done':''}">${esc(t.text)}</div>
-      <div class="todo-meta"><span class="badge ${PC[t.priority]||'bm'}">${PL[t.priority]||'보통'}</span>${due?`<span class="due${iso?' ov':isT?' dt':''}">${due}</span>`:''}</div></div>
+      <div class="list-body">
+        <div class="todo-txt${t.done?' done':''}">${esc(t.text)}</div>
+        ${t.memo?`<div style="font-size:11px;color:var(--muted);margin-top:2px;line-height:1.4;${t.done?'text-decoration:line-through;':''}">${esc(t.memo)}</div>`:''}
+        <div class="todo-meta"><span class="badge ${PC[t.priority]||'bm'}">${PL[t.priority]||'보통'}</span>${due?`<span class="due${iso?' ov':isT?' dt':''}">${due}</span>`:''}</div>
+      </div>
       <div class="list-actions"><button class="iBtn del" onclick="deleteTodo(${t.id})">삭제</button></div>
     </div>`;
   }).join('');
@@ -1350,9 +1353,9 @@ async function addFromAI(i) {
   const btn = document.getElementById('air-add-'+i); btn.disabled = true; btn.textContent = '추가 중...';
   const t = (window._aiTasks || [])[i];
   if (!t) return;
-  // 제목 + 요약 합치기
-  const fullText = t.summary ? t.text + ' — ' + t.summary : t.text;
-  await addTodoAI(fullText, t.due||'', t.priority||'mid');
+  // 제목과 메모 분리 저장
+  await apiPost({action:'addTodo', text:t.text, due:t.due||'', priority:t.priority||'mid', memo:t.summary||''});
+  loadTodos();
   btn.textContent = '✓ 추가됨'; btn.classList.add('added');
   document.getElementById('air-'+i).style.opacity = '0.5';
 }
